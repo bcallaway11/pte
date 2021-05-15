@@ -1,0 +1,30 @@
+pte <- function(yname,
+                gname,
+                tname,
+                idname,
+                data,
+                or_xformla,
+                pscore_xformla ,
+                biters=100,
+                cl=1) {
+
+
+  ptep <- setup_pte(yname=yname,
+                    gname=gname,
+                    tname=tname,
+                    idname=idname,
+                    data=data,
+                    alp=alp,
+                    biters=biters,
+                    cl=cl)
+
+  res <- compute.pte(ptep=ptep,
+                     or_xformla=or_xformla,
+                     pscore_xformla=pscore_xformla)
+  
+  
+  att_gt <- process_att_gt(res,dp)
+  
+  return(att_gt)
+
+}
