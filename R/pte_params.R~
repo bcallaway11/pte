@@ -1,0 +1,44 @@
+pte_params <- function(yname,
+                       gname,
+                       tname,
+                       idname,
+                       data,
+                       biters,
+                       cl) {
+  
+  data <- as.data.frame(data)
+  
+  # setup data
+  G <- data[,gname]
+  id <- data[,idname]
+  period <- data[,tname]
+
+  data$G <- G
+  data$id <- id
+  n <- length(unique(data$id))
+  data$period <- period
+  data$Y <- data[,yname]
+  
+  time.periods <- unique(data$period)
+  groups <- unique(data$G)
+
+  # drop never treated group
+  groups <- sort(groups)[-1]
+
+  # sort the time periods and drop the first period
+  time.periods <- sort(time.periods)[-1]
+
+  dp <- DIDparams(yname=yname,
+                  gname=gname,
+                  tname=tname,
+                  idname=idname,
+                  data=data,
+                  control_group="",
+                  est_method="",
+                  true_repeated_cross_sections=FALSE,
+                  glist=groups,
+                  tlist=time.periods,
+                  panel=TRUE,
+                  alp=0.05)
+
+}
