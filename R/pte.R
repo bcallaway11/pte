@@ -45,7 +45,16 @@ compute.pte <- function(ptep,
     # loop over all time periods
     for (tp in time.periods) {
 
-      attgt <- attgt_fun(...)
+
+      #-----------------------------------------------------------------------------
+      # code to get the right subset of the data
+      #-----------------------------------------------------------------------------
+
+
+      #-----------------------------------------------------------------------------
+      # code to estimate attgt using correct relevant data
+      #-----------------------------------------------------------------------------
+      attgt <- attgt_fun(gt_data,...)
 
       #-----------------------------------------------------------------------------
       # If this is too generic...
@@ -53,7 +62,11 @@ compute.pte <- function(ptep,
       # and just write your own code in this spot
       #-----------------------------------------------------------------------------
 
- 
+      #-----------------------------------------------------------------------------
+      # process attgt results
+      #   - branch based on whether or not attgt_fun returned an influence
+      #     function
+      #-----------------------------------------------------------------------------
       attgt$att.inf.func <- (n/n1)*attgt$att.inf.func
       # save results
       attgt.list[[counter]] <- list(att=attgt$ATT, group=g, time.period=tp)
