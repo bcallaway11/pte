@@ -152,8 +152,10 @@ pte <- function(yname,
                      attgt_fun=attgt_fun,
                      ...)
 
-  browser()
+  
   att_gt <- process_att_gt(res,ptep)
+
+  browser()
   
   return(att_gt)
 

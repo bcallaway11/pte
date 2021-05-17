@@ -66,9 +66,11 @@ process_att_gt <- function(att_gt_results, ptep) {
   #-----------------------------------------------------------------------------
   # compute confidence intervals / bands
   #-----------------------------------------------------------------------------
+
+  browser()
   
   # Return this list
-  return(MP(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, c=bout$crit_val, inffunc=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, DIDparams=dp))
+  return(group_time_att(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
 }
 
 #' @title mboot2
