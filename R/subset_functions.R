@@ -4,7 +4,7 @@
 #'   This is the subset with post treatment periods separately for the
 #'   treated group and comparison group and pre-treatment periods in the period
 #'   immediately before the treated group became treated.
-two_by_two_subset <- function(ptep, g, tp, control_group="notyettreated") {
+two_by_two_subset <- function(data, g, tp, control_group="notyettreated", ...) {
   
   # get the correct "base" period for this group
   # (subtract 2 to avoid anticipation)

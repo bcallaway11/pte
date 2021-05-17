@@ -1,4 +1,5 @@
 compute.pte <- function(ptep,
+                        subset_fun,
                         attgt_fun,
                         ...) {
   #-----------------------------------------------------------------------------
@@ -44,17 +45,19 @@ compute.pte <- function(ptep,
         
     # loop over all time periods
     for (tp in time.periods) {
-
-
+      
       #-----------------------------------------------------------------------------
       # code to get the right subset of the data
       #-----------------------------------------------------------------------------
-
+      gt_subset <- subset_fun(data, g, tp, ... )
+      gt_data <- gt_subset$gt_data
+      n1 <- gt_subset$n1
+      disidx <- gt_subset$disidx
 
       #-----------------------------------------------------------------------------
       # code to estimate attgt using correct relevant data
       #-----------------------------------------------------------------------------
-      attgt <- attgt_fun(gt_data,...)
+      attgt <- attgt_fun(g=g, tp=tp, data=gt_data, ...)
 
       #-----------------------------------------------------------------------------
       # If this is too generic...
@@ -67,14 +70,18 @@ compute.pte <- function(ptep,
       #   - branch based on whether or not attgt_fun returned an influence
       #     function
       #-----------------------------------------------------------------------------
-      attgt$att.inf.func <- (n/n1)*attgt$att.inf.func
-      # save results
-      attgt.list[[counter]] <- list(att=attgt$ATT, group=g, time.period=tp)
 
-      this.inf_func <- rep(0,n)
-      this.inf_func[disidx] <- attgt$att.inf.func
-      inffunc[,counter] <- this.inf_func
+      if ( !is.null(attgt$inf_func) ) {
+        # adjust for relative sizes of overall data
+        # and groups used for this attgt
+        attgt$inf_func <- (n/n1)*attgt$inf_func
+        # save results
+        attgt.list[[counter]] <- list(att=attgt$attgt, group=g, time.period=tp)
 
+        this.inf_func <- rep(0,n)
+        this.inf_func[disidx] <- attgt$inf_func
+        inffunc[,counter] <- this.inf_func
+      }
 
       #cat("counter: ", counter, "\n")
       counter <- counter+1
@@ -123,6 +130,7 @@ pte <- function(yname,
                 tname,
                 idname,
                 data,
+                subset_fun,
                 attgt_fun,
                 alp=0.05,
                 biters=100,
@@ -140,9 +148,11 @@ pte <- function(yname,
                     cl=cl)
 
   res <- compute.pte(ptep=ptep,
+                     subset_fun=subset_fun,
                      attgt_fun=attgt_fun,
                      ...)
-  
+
+  browser()
   att_gt <- process_att_gt(res,ptep)
   
   return(att_gt)

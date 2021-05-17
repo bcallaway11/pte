@@ -1,0 +1,2 @@
+files.sources = list.files("~/Dropbox/pte/R")
+sapply(files.sources, source)

@@ -68,7 +68,7 @@ process_att_gt <- function(att_gt_results, ptep) {
   #-----------------------------------------------------------------------------
   
   # Return this list
-  return(MP(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, c=bout$crit_val, inffunc=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, DIDparams=dp))
+  return(group_time_att(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, c=bout$crit_val, inffunc=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, DIDparams=dp))
 }
 
 #' @title mboot2

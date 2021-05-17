@@ -3,47 +3,14 @@
 #' @description takes groups and time periods and turns it into
 #'  an estimate of a group time average treatment effect
 #'  and a corresponding influence function
-covid_attgt <- function(g, tp, data, id, xformla) {
-  # get the correct "base" period for this group
-  # (subtract 2 to avoid anticipation)
-  main.base.period <- g - 1
-
-  #----------------------------------------------------
-  # if it's a pre-treatment time period (used for the
-  # pre-test, we need to adjust the base period)
-
-  # group not treated yet
-  if (tp < g) {
-    # move two periods before
-    base.period <- tp - 1
-  } else {
-    # this is a post-treatment period
-    base.period <- main.base.period
-  }
-  #----------------------------------------------------
-
-  #----------------------------------------------------
-  # now, all we need to do is collect the right subset
-  # of the data and estimate ATT(g,t)
-
-  # get group g and not-yet-treated group
-  this.data <- subset(data, G==g | G>tp | G==0)
-
-  # get current period and base period data
-  this.data <- subset(this.data, period==tp | period==base.period)
+covid_attgt <- function(g, tp, data, xformla) {
   
-  # variable to keep track of pre/post periods
-  this.data$name <- ifelse(this.data$period==tp, "post", "pre")
-
-  # number of observations used for this (g,t)
-  n1 <- length(unique(this.data$id))
-  disidx <- unique(data$id) %in% unique(this.data$id)
-
+  this.data <- data
   # handle covariates
   # for outcome regression, get pre-treatment values
-  Xor <- model.frame(or_xformla, data=subset(this.data,name=="pre"))
+  Xor <- model.frame(xformla, data=subset(this.data,name=="pre"))
   # for pscore, get pre-treatment values
-  Xpscore <- model.frame(pscore_xformla, data=subset(this.data,name=="pre"))
+  Xpscore <- model.frame(xformla, data=subset(this.data,name=="pre"))
 
   # convert two period panel into one period
   this.data_outcomes <- tidyr::pivot_wider(this.data[,c("G","id","period","name","Y")], id_cols=c(id, G),
@@ -59,8 +26,8 @@ covid_attgt <- function(g, tp, data, id, xformla) {
 
   # run the outcome regression,
   # note: this is regression of change on covariates (which makes sense given structure of model in paper)
-  or_formla <- BMisc::toformula("I(post-pre)", BMisc::rhs.vars(or_xformla))
-  outcome_regression <- lm(or_formla,data=subset(this.dataOR, (G > g | G == 0)))
+  or_formla <- BMisc::toformula("I(post-pre)", BMisc::rhs.vars(xformla))
+  outcome_regression <- lm(or_formla, data=this.dataOR)#data=subset(this.dataOR, (G > g | G == 0)))
   # and get predicted values
   # note: add back in pre-treatment outcomes so that this
   # is prediction for the level of outcomes in post-treatment
@@ -68,7 +35,7 @@ covid_attgt <- function(g, tp, data, id, xformla) {
   or_preds <- predict(outcome_regression, newdata=this.dataOR) + this.dataOR$pre
 
   # run the pscore regression
-  pscore_formla <- BMisc::toformula("D", c(BMisc::rhs.vars(pscore_xformla)))
+  pscore_formla <- BMisc::toformula("D", c(BMisc::rhs.vars(xformla)))
 
   # warn about units violating common support
   # keepers provides a way to drop problematic pscores,
@@ -97,4 +64,6 @@ covid_attgt <- function(g, tp, data, id, xformla) {
                               covariates=model.matrix(pscore_formla,
                                                       data=this.dataPscore),
                               inffunc=TRUE)
+
+  list(attgt=attgt$ATT, inf_func=attgt$att.inf.func)
 }
