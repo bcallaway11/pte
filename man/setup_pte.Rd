@@ -24,5 +24,5 @@ setup_pte(yname, gname, tname, idname, data, alp = 0.05, biters = 100, cl = 1)
 \item{cl}{number of clusters to be used when bootstrapping; default is 1}
 }
 \description{
-setup_pte
+Setup panel treatment effects parameters
 }

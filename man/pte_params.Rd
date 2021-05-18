@@ -30,5 +30,5 @@ effects for}
 \item{cl}{number of clusters to be used when bootstrapping; default is 1}
 }
 \description{
-pte_params
+Objects that contain pte parameters
 }

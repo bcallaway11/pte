@@ -1,6 +1,6 @@
 #' @title setup_pte
 #'
-#' @desc Setup panel treatment effects parameters
+#' @description Setup panel treatment effects parameters
 #'
 #' @inheritParams pte_params
 #'
@@ -52,7 +52,7 @@ setup_pte <- function(yname,
 
 #' @title pte_params
 #'
-#' @desc Objects that contain pte parameters
+#' @description Objects that contain pte parameters
 #'
 #' @param yname Name of outcome in \code{data}
 #' @param gname Name of group in \code{data}
