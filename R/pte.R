@@ -152,11 +152,31 @@ pte <- function(yname,
                      attgt_fun=attgt_fun,
                      ...)
 
+
   
   att_gt <- process_att_gt(res,ptep)
 
-  browser()
-  
-  return(att_gt)
+  #-----------------------------------------------------------------------------
+  # aggregate ATT(g,t)'s
+  #-----------------------------------------------------------------------------
 
+  # overall
+  overall_att <- did::aggte(att_gt, type="group", bstrap=TRUE, cband=TRUE)
+
+  # event study
+  # ... for max_e and min_e
+  dots <- list(...)
+  min_e <- ifelse(is.null(dots$min_e), -Inf, dots$min_e)
+  max_e <- ifelse(is.null(dots$max_e), -Inf, dots$max_e)
+  balance_e <- dots$balance_e
+  
+  event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=TRUE, min_e=min_e, max_e=max_e, balance_e=balance_e)
+
+  # output
+  out <- pte_results(att_gt=att_gt,
+                     overall_att=overall_att,
+                     event_study=event_study,
+                     ptep=ptep)
+  
+  out
 }

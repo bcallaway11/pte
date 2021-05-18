@@ -63,13 +63,8 @@ process_att_gt <- function(att_gt_results, ptep) {
     Wpval <- round(1-pchisq(W,q),5)
   }
 
-  #-----------------------------------------------------------------------------
-  # compute confidence intervals / bands
-  #-----------------------------------------------------------------------------
-
-  browser()
   
-  # Return this list
+  # Return list for ATT(g,t)
   return(group_time_att(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
 }
 
