@@ -57,7 +57,7 @@ compute.pte <- function(ptep,
       #-----------------------------------------------------------------------------
       # code to estimate attgt using correct relevant data
       #-----------------------------------------------------------------------------
-      attgt <- attgt_fun(g=g, tp=tp, data=gt_data, ...)
+      attgt <- attgt_fun(gt_data=gt_data, ...)
 
       #-----------------------------------------------------------------------------
       # If this is too generic...
@@ -167,7 +167,7 @@ pte <- function(yname,
   # ... for max_e and min_e
   dots <- list(...)
   min_e <- ifelse(is.null(dots$min_e), -Inf, dots$min_e)
-  max_e <- ifelse(is.null(dots$max_e), -Inf, dots$max_e)
+  max_e <- ifelse(is.null(dots$max_e), Inf, dots$max_e)
   balance_e <- dots$balance_e
   
   event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=TRUE, min_e=min_e, max_e=max_e, balance_e=balance_e)

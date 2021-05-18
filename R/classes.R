@@ -243,7 +243,49 @@ print.summary.pte_results <- function(object,...) {
 #' @export
 attgt_if <- function(attgt, inf_func) {
 
-  out <- list(attgt=attgt$ATT, inf_func=attgt$att.inf.func)
+  out <- list(attgt=attgt, inf_func=inf_func)
   class(out) <- "attgt_if"
   out
 }
+
+#' @title attgt_noif
+#'
+#' @description Class for holding group-time average treatment effects
+#'  which don't include influence functions
+#'
+#' @param attgt group-time average treatment effect
+#'
+#' @return attgt_if object
+#'
+#' @export
+attgt_noif <- function(attgt) {
+
+  out <- list(attgt=attgt$ATT)
+  class(out) <- "attgt_noif"
+  out
+}
+
+
+#' @title gt_data_frame
+#'
+#' @description function to take in a data.frame, check if it has the right
+#'  columns to be used to calculate a group-time average treatment effect,
+#'  and sets the class of the data.frame to include \code{gt_data_frame}
+#'
+#' @return \code{gt_data_frame} object
+#'
+#' @export
+gt_data_frame <- function(data) {
+
+  cnames <- colnames(data)
+  if( !all(c("G","id","period","name","Y","D") %in% cnames) ) {
+    warning("group-time subset of data does not contain correct column names")
+  }
+
+  if( !("gt_data_frame" %in% class(data)) ) {
+    class(data) <- c("gt_data_frame", class(data))
+  }
+
+  data
+}
+  

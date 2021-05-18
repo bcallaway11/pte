@@ -41,6 +41,12 @@ two_by_two_subset <- function(data, g, tp, control_group="notyettreated", ...) {
   # variable to keep track of pre/post periods
   this.data$name <- ifelse(this.data$period==tp, "post", "pre")
 
+  # variable to indicate local treatment status
+  this.data$D <- 1*(this.data$G==g)
+  
+  # make this.data into gt_data_frame object
+  this.data <- gt_data_frame(this.data)
+  
   # number of observations used for this (g,t)
   n1 <- length(unique(this.data$id))
   disidx <- unique(data$id) %in% unique(this.data$id)

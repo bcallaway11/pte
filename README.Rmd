@@ -1,0 +1,93 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-"
+)
+```
+
+```{r, echo=FALSE, results="hide", warning=FALSE, message=FALSE}
+BMisc::source_all("~/Dropbox/pte/R/")
+BMisc::source_all("~/Dropbox/ppe/R/")
+load("~/Dropbox/ppe/data/covid_data.rda")
+library(ggplot2)
+```
+# Panel Treatment Effects (pte) Package
+
+The `pte` package compartmentalizes the steps needed to implement estimators of group-time average treatment effects (and their aggregations) in order to make it easier to apply the same sorts of arguments outside of their "birthplace" in the literature on difference-in-differences.
+
+This code is lightweight, only works for balanced panels, and has minimal error checking.  That said, it should be useful projects that build on top of group-time average treatment effects in order to deliver estimates of causal effects in panel data settings.
+
+Here are a couple of examples:
+
+## Example 1: Difference in differences
+
+*Note:* This is not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.
+```{r}
+library(did)
+data(mpdta)
+did_res <- pte(yname="lemp",
+           gname="first.treat",
+           tname="year",
+           idname="countyreal",
+           data=mpdta,
+           subset_fun=two_by_two_subset,
+           attgt_fun=did_attgt,
+           xformla=~lpop) 
+
+summary(did_res)
+ggpte(did_res)
+```
+What's most interesting here, is that the only "new" code that needs to be writte is in the `did_attgt` function [available here](https://github.com/bcallaway11/pte/blob/master/R/attgt_functions.R).  You will see that this is a very small amount of code.
+
+## Example 2: Policy Evaluation during a Pandemic
+
+This comes from [Callaway and Li (2021)](https://arxiv.org/abs/2105.06927).
+
+```{r}
+# formula for covariates
+xformla <- ~ current + I(current^2) + region + totalTestResults
+```
+
+```{r echo=FALSE, results=FALSE, warning=FALSE}
+# drop some data as in paper
+trim_id_list <- lapply(c(10,15,20,25,30),
+                       did::trimmer,
+                       tname="time.period",
+                       idname="state_id",
+                       gname="group",
+                       xformla=xformla,
+                       data=covid_data,
+                       control_group="nevertreated",
+                       threshold=0.95)
+time_id_list <- unlist(trim_id_list)
+
+# unique(subset(covid_data, state_id %in% time_id_list)$state)
+covid_data2 <- subset(covid_data, !(state_id %in% time_id_list))
+```
+
+
+```{r}
+covid_res <- pte(yname="positive",
+                 gname="group",
+                 tname="time.period",
+                 idname="state_id",
+                 data=covid_data2,
+                 subset_fun=two_by_two_subset,
+                 attgt_fun=covid_attgt,
+                 xformla=xformla,
+                 max_e=21,
+                 min_e=-10) 
+
+summary(covid_res)
+ggpte(covid_res) + ylim(c(-1000,1000))
+```
+
+What's most interesting here is just how little code needs to be written here.  The only new code required is the `ppe::covid_attgt` function which is [available here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R), and, as you can see, this is very simple.
+
