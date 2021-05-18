@@ -1,3 +1,10 @@
+#' @title ggpte
+#'
+#' @description Simple event study plots for panel treatment effects
+#'
+#' @param pte_results A \code{pte_results} object
+#'
+#' @export
 ggpte <- function(pte_results) {
   plot_df <- summary(pte_results)$event_study
   colnames(plot_df) <- c("e", "att", "se", "cil", "ciu")

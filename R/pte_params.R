@@ -58,6 +58,7 @@ setup_pte <- function(yname,
 #' @param gname Name of group in \code{data}
 #' @param tname Name of time period in \code{data}
 #' @param idname Name of id in \code{data}
+#' @param data balanced panel data
 #' @param glist list of groups to create group-time average treatment effects
 #'  for
 #' @param tlist list of time periods to create group-time average treatment

@@ -12,6 +12,8 @@ pte_results(att_gt, overall_att, event_study, ptep)
 \item{overall_att}{overall_att results}
 
 \item{event_study}{event_study results}
+
+\item{ptep}{\code{pte_params} object}
 }
 \description{
 class for holding pte results

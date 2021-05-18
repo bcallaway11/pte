@@ -2,7 +2,8 @@
 #'
 #' @description process attgt results when influence function is available
 #'
-#' @param att_gt_results
+#' @param att_gt_results ATT(g,t)'s
+#' @inheritParams pte_results
 #'
 #' @export
 process_att_gt <- function(att_gt_results, ptep) {
@@ -65,13 +66,16 @@ process_att_gt <- function(att_gt_results, ptep) {
 
   
   # Return list for ATT(g,t)
-  return(group_time_att(group=group, t=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
+  return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
 }
 
 #' @title mboot2
 #'
 #' @description function for using multiplier bootstrap to conduct
 #'  inference
+#'
+#' @param inffunc influence function matrix
+#' @inheritParams pte
 #'
 #' @export
 mboot2 <- function(inffunc, biters=1000, alp=.05) {

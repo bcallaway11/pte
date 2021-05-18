@@ -7,8 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "brantly.callaway@uga.edu")
 Description: This is fairly generic code for estimating treatment effects with panel data.  This is useful code in my own work and will perhaps be useful to others.  It builds heavily on the \code{did} package.  In particular, it breaks into separate steps organizing the data, looping over groups and time periods, computing group-time average treatment effects, and aggregating group-time average treatment effects.  Often, one is able to implement a new identification/estimation procedure by simply replacing the step on estimating group-time average treatment effects.  See several different examples of this approach in the README.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -16,5 +15,8 @@ RoxygenNote: 7.1.1
 Imports:
     BMisc (>= 1.4.1),
     Matrix,
-    did (>= 2.0.0)
+    did (>= 2.0.0),
+    ggplot2,
+    DRDID,
+    tidyr
 

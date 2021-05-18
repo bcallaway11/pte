@@ -1,3 +1,13 @@
+#' @title compute.pte
+#'
+#' @description Function that actually computes panel treatment effects
+#'
+#' @inheritParams pte
+#' @param ptep \code{pte_params} object
+#'
+#' @return list of attgt results and, sometimes, and influence function
+#'
+#' @export
 compute.pte <- function(ptep,
                         subset_fun,
                         attgt_fun,
@@ -100,6 +110,13 @@ compute.pte <- function(ptep,
 #' @description Main function for computing panel treatment effects
 #'
 #' @inheritParams pte_params
+#' @param subset_fun This is a function that should take in \code{data},
+#'  \code{g} (for group), \code{tp} (for time period), and \code{...}
+#'  and be able to return the appropriate \code{data.frame} that can be used
+#'  by \code{attgt_fun} to produce ATT(g=g,t=tp).  The data frame should
+#'  be constructed using \code{gt_data_frame} in order to guarantee that
+#'  it has the appropriate columns that identify which group an observation
+#'  belongs to, etc.
 #' @param attgt_fun This is a function that should work in the case where
 #'  there is a single group and the "right" number of time periods to
 #'  recover an estimate of the ATT.  For example, in the contest of
@@ -110,8 +127,10 @@ compute.pte <- function(ptep,
 #'  by groups and by time periods to compute ATT(g,t)'s.
 #'
 #'  The function needs to work in a very specific way.  It should take in the
-#'  arguments: \code{data}, \code{group}, \code{time.periods}, \code{glist},
-#'  \code{tlist}, and \code{...}.  \code{...} are additional arguments (such as
+#'  arguments: \code{data}, \code{...}.  \code{data} should be constructed
+#'  using the function \code{gt_data_frame} which checks to make sure
+#'  that \code{data} has the correct columns defined.
+#'  \code{...} are additional arguments (such as
 #'  formulas for covariates) that \code{attgt_fun} needs.  From these arguments
 #'  \code{attgt_fun} must return a list with element \code{ATT} containing the
 #'  group-time average treatment effect for that group and that time period.
@@ -125,6 +144,16 @@ compute.pte <- function(ptep,
 #'  objects will be computed using the empirical bootstrap.  This is usually
 #'  (perhaps substantially) easier to code, but also will usually be (perhaps
 #'  substantially) computationally slower.
+#'
+#' @param ... extra arguments that can be passed to create the correct subsets
+#'  of the data (depending on \code{subset_fun}), to estimate group time
+#'  average treatment effects (depending on \code{attgt_fun}), or to
+#'  aggregating treatment effects (particularly useful are \code{min_e},
+#'  \code{max_e}, and \code{balance_e} arguments to event study aggregations)
+#'
+#' @return \code{pte_results} object
+#'
+#' @export
 pte <- function(yname,
                 gname,
                 tname,

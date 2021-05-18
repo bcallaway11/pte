@@ -2,6 +2,23 @@
 #'
 #' @description group_time_att class
 #'
+#' @param group numeric vector of groups for ATT(g,t)
+#' @param time.period numeric vector of time periods for ATT(g,t)
+#' @param att numeric vector containing the value of ATT(g,t) for
+#'  corresponding group and time period
+#' @param V_analytical analytical asymptotic variance matrix for ATT(g,t)'s
+#' @param se numeric vector of standard errors
+#' @param crit_val critical value (usually a critical value for conducting
+#'  uniform inference)
+#' @param inf_func matrix of influence function
+#' @param n number of unique individuals
+#' @param W Wald statistic for ATT(g,t) version of pre-test of parallel trends
+#'  assumption
+#' @param Wpval p-value for Wald pre-test of ATT(g,t) version of parallel
+#'  trends assumption
+#' @param alp significance level
+#' @param ptep \code{pte_params} object
+#' 
 #' @return object of class \code{group_time_att}
 #'
 #' @export
@@ -112,6 +129,7 @@ print.group_time_att <- function(x,...) {
 #' @param att_gt attgt results
 #' @param overall_att overall_att results
 #' @param event_study event_study results
+#' @param ptep \code{pte_params} object
 #'
 #' @export
 pte_results <- function(att_gt,
@@ -207,7 +225,18 @@ print.pte_results <- function(x,...) {
   summary.pte_results(x,...)
 }
 
-print.summary.pte_results <- function(object,...) {
+
+
+#' @title print.summary.pte_results
+#'
+#' @description prints value of a \code{summary.pte_results} object
+#'
+#' @param x a \code{summary.pte_results} object
+#' @param ... extra arguments
+#'
+#' @export
+print.summary.pte_results <- function(x,...) {
+  object <- x
   out1 <- object$overall_att
   out2 <- object$event_study
   alp <- object$alp
@@ -272,6 +301,9 @@ attgt_noif <- function(attgt) {
 #'  columns to be used to calculate a group-time average treatment effect,
 #'  and sets the class of the data.frame to include \code{gt_data_frame}
 #'
+#' @param data data that will be checked to see if has right format for
+#'  computing group-time average treatment effects
+#' 
 #' @return \code{gt_data_frame} object
 #'
 #' @export

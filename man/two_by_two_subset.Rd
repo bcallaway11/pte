@@ -6,6 +6,24 @@
 \usage{
 two_by_two_subset(data, g, tp, control_group = "notyettreated", ...)
 }
+\arguments{
+\item{data}{the full dataset}
+
+\item{g}{the current group}
+
+\item{tp}{the current time period}
+
+\item{control_group}{whether to use "notyettreated" (default) or
+"nevertreated"}
+
+\item{...}{extra arguments to get the subset correct}
+}
+\value{
+list that contains correct subset of data, \code{n1}
+number of observations
+in this subset, and \code{disidx} a vector of the correct ids for this
+subset.
+}
 \description{
 A function for computing a 2x2 subset of original data.
 This is the subset with post treatment periods separately for the

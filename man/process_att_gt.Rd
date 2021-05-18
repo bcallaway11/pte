@@ -7,7 +7,9 @@
 process_att_gt(att_gt_results, ptep)
 }
 \arguments{
-\item{att_gt_results}{}
+\item{att_gt_results}{ATT(g,t)'s}
+
+\item{ptep}{\code{pte_params} object}
 }
 \description{
 process attgt results when influence function is available

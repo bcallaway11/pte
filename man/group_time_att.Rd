@@ -19,6 +19,35 @@ group_time_att(
   ptep
 )
 }
+\arguments{
+\item{group}{numeric vector of groups for ATT(g,t)}
+
+\item{time.period}{numeric vector of time periods for ATT(g,t)}
+
+\item{att}{numeric vector containing the value of ATT(g,t) for
+corresponding group and time period}
+
+\item{V_analytical}{analytical asymptotic variance matrix for ATT(g,t)'s}
+
+\item{se}{numeric vector of standard errors}
+
+\item{crit_val}{critical value (usually a critical value for conducting
+uniform inference)}
+
+\item{inf_func}{matrix of influence function}
+
+\item{n}{number of unique individuals}
+
+\item{W}{Wald statistic for ATT(g,t) version of pre-test of parallel trends
+assumption}
+
+\item{Wpval}{p-value for Wald pre-test of ATT(g,t) version of parallel
+trends assumption}
+
+\item{alp}{significance level}
+
+\item{ptep}{\code{pte_params} object}
+}
 \value{
 object of class \code{group_time_att}
 }

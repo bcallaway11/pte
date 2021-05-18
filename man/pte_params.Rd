@@ -15,6 +15,8 @@ pte_params(yname, gname, tname, idname, data, glist, tlist, alp, biters, cl)
 
 \item{idname}{Name of id in \code{data}}
 
+\item{data}{balanced panel data}
+
 \item{glist}{list of groups to create group-time average treatment effects
 for}
 

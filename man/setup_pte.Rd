@@ -15,6 +15,8 @@ setup_pte(yname, gname, tname, idname, data, alp = 0.05, biters = 100, cl = 1)
 
 \item{idname}{Name of id in \code{data}}
 
+\item{data}{balanced panel data}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{biters}{number of bootstrap iterations; default is 100}

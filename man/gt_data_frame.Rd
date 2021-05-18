@@ -6,6 +6,10 @@
 \usage{
 gt_data_frame(data)
 }
+\arguments{
+\item{data}{data that will be checked to see if has right format for
+computing group-time average treatment effects}
+}
 \value{
 \code{gt_data_frame} object
 }

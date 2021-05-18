@@ -4,6 +4,20 @@
 #'   This is the subset with post treatment periods separately for the
 #'   treated group and comparison group and pre-treatment periods in the period
 #'   immediately before the treated group became treated.
+#'
+#' @param data the full dataset
+#' @param g the current group
+#' @param tp the current time period
+#' @param control_group whether to use "notyettreated" (default) or
+#'  "nevertreated"
+#' @param ... extra arguments to get the subset correct
+#'
+#' @return list that contains correct subset of data, \code{n1}
+#'  number of observations
+#'  in this subset, and \code{disidx} a vector of the correct ids for this
+#'  subset.
+#'
+#' @export
 two_by_two_subset <- function(data, g, tp, control_group="notyettreated", ...) {
   
   # get the correct "base" period for this group
