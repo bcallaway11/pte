@@ -33,30 +33,30 @@ rather a proof of concept.\]
 library(did)
 data(mpdta)
 did_res <- pte(yname="lemp",
-           gname="first.treat",
-           tname="year",
-           idname="countyreal",
-           data=mpdta,
-           subset_fun=two_by_two_subset,
-           attgt_fun=did_attgt,
-           xformla=~lpop) 
+               gname="first.treat",
+               tname="year",
+               idname="countyreal",
+               data=mpdta,
+               subset_fun=two_by_two_subset,
+               attgt_fun=did_attgt,
+               xformla=~lpop) 
 
 summary(did_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.]  
-#>  -0.0323        0.0116    -0.0551     -0.0094 *
+#>  -0.0323        0.0138    -0.0594     -0.0052 *
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error   [95%  Conf. Band]  
-#>          -3   0.0269     0.0124 -0.0043      0.0581  
-#>          -2  -0.0050     0.0107 -0.0321      0.0221  
-#>          -1  -0.0229     0.0148 -0.0603      0.0146  
-#>           0  -0.0201     0.0130 -0.0528      0.0126  
-#>           1  -0.0547     0.0158 -0.0947     -0.0148 *
-#>           2  -0.1382     0.0436 -0.2484     -0.0280 *
-#>           3  -0.1069     0.0294 -0.1812     -0.0326 *
+#>          -3   0.0269     0.0145 -0.0102      0.0640  
+#>          -2  -0.0050     0.0131 -0.0385      0.0286  
+#>          -1  -0.0229     0.0135 -0.0573      0.0116  
+#>           0  -0.0201     0.0112 -0.0487      0.0084  
+#>           1  -0.0547     0.0168 -0.0977     -0.0117 *
+#>           2  -0.1382     0.0372 -0.2331     -0.0433 *
+#>           3  -0.1069     0.0405 -0.2104     -0.0034 *
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(did_res)
@@ -102,48 +102,52 @@ covid_res <- pte(yname="positive",
                  xformla=xformla,
                  max_e=21,
                  min_e=-10) 
+#> Warning in compute.aggte(MP = MP, type = type, balance_e = balance_e, min_e
+#> = min_e, : Simultaneous conf. band is somehow smaller than pointwise one
+#> using normal approximation. Since this is unusual, we are reporting pointwise
+#> confidence intervals
 
 summary(covid_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.] 
-#>  14.8882       83.0773  -147.9403    177.7166 
+#>  14.8882       82.1318  -146.0872    175.8635 
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error     [95%  Conf. Band] 
-#>         -10  -3.7266     2.6367  -10.0604      2.6072 
-#>          -9   2.6607     1.5072   -0.9599      6.2812 
-#>          -8   0.8290     2.3897   -4.9116      6.5695 
-#>          -7   5.2843     2.5049   -0.7329     11.3016 
-#>          -6   2.8555     1.7492   -1.3464      7.0574 
-#>          -5   1.3589     3.7461   -7.6401     10.3579 
-#>          -4   0.3294     4.5347  -10.5638     11.2226 
-#>          -3  -4.2227     4.8133  -15.7852      7.3399 
-#>          -2  -3.8447     2.7544  -10.4614      2.7720 
-#>          -1  -0.2234     4.1382  -10.1641      9.7174 
-#>           0 -10.8156     8.7618  -31.8632     10.2319 
-#>           1 -13.7998    13.8698  -47.1178     19.5181 
-#>           2  -7.8432    12.2763  -37.3333     21.6469 
-#>           3  -4.5541    10.1365  -28.9040     19.7957 
-#>           4  -3.5368     9.9319  -27.3952     20.3215 
-#>           5   8.5221    10.7019  -17.1859     34.2301 
-#>           6   1.1140    16.3065  -38.0574     40.2854 
-#>           7   6.6384    18.3346  -37.4048     50.6817 
-#>           8   7.1288    21.9389  -45.5727     59.8303 
-#>           9  10.8758    32.3153  -66.7518     88.5034 
-#>          10  17.5057    33.7126  -63.4784     98.4898 
-#>          11  40.8318    32.9833  -38.4004    120.0639 
-#>          12  48.6134    41.6148  -51.3534    148.5802 
-#>          13  52.4228    68.2881 -111.6184    216.4640 
-#>          14  50.2000    59.8736  -93.6280    194.0281 
-#>          15  68.2960    64.3350  -86.2491    222.8411 
-#>          16  44.7305    77.8088 -142.1814    231.6424 
-#>          17  61.4670   111.9387 -207.4313    330.3652 
-#>          18  50.4635   111.2992 -216.8987    317.8257 
-#>          19  47.3392   124.5669 -251.8945    346.5728 
-#>          20  28.6326   123.8868 -268.9673    326.2326 
-#>          21   4.3445   130.7164 -309.6615    318.3506 
+#>         -10  -3.7266     3.0668  -11.6745      4.2212 
+#>          -9   2.6607     1.4412   -1.0743      6.3957 
+#>          -8   0.8290     2.2273   -4.9432      6.6011 
+#>          -7   5.2843     2.2943   -0.6615     11.2302 
+#>          -6   2.8555     2.1154   -2.6268      8.3378 
+#>          -5   1.3589     4.6187  -10.6108     13.3286 
+#>          -4   0.3294     3.7885   -9.4889     10.1476 
+#>          -3  -4.2227     5.2106  -17.7262      9.2809 
+#>          -2  -3.8447     2.6474  -10.7058      3.0163 
+#>          -1  -0.2234     3.8307  -10.1509      9.7041 
+#>           0 -10.8156     9.4804  -35.3848     13.7535 
+#>           1 -13.7998    10.8085  -41.8108     14.2112 
+#>           2  -7.8432    11.9213  -38.7380     23.0517 
+#>           3  -4.5541    11.2907  -33.8148     24.7065 
+#>           4  -3.5368    16.2044  -45.5319     38.4583 
+#>           5   8.5221    13.5634  -26.6284     43.6726 
+#>           6   1.1140    16.2143  -40.9066     43.1346 
+#>           7   6.6384    18.8463  -42.2031     55.4800 
+#>           8   7.1288    28.0897  -65.6678     79.9254 
+#>           9  10.8758    32.5480  -73.4749     95.2266 
+#>          10  17.5057    31.5339  -64.2169     99.2283 
+#>          11  40.8318    40.1220  -63.1476    144.8111 
+#>          12  48.6134    47.1346  -73.5395    170.7663 
+#>          13  52.4228    46.6190  -68.3939    173.2395 
+#>          14  50.2000    57.7241  -99.3964    199.7964 
+#>          15  68.2960    70.4012 -114.1541    250.7462 
+#>          16  44.7305    84.2624 -173.6421    263.1031 
+#>          17  61.4670    76.5716 -136.9742    259.9081 
+#>          18  50.4635    92.6913 -189.7533    290.6803 
+#>          19  47.3392   121.7477 -268.1794    362.8578 
+#>          20  28.6326   134.8792 -320.9172    378.1825 
+#>          21   4.3445   165.0635 -423.4302    432.1193 
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(covid_res) + ylim(c(-1000,1000))
@@ -156,3 +160,71 @@ here. The only new code required is the `ppe::covid_attgt` function
 which is [available
 here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R),
 and, as you can see, this is very simple.
+
+## Example 3: Empirical Bootstrap
+
+The code above used the multiplier bootstrap. The great thing about the
+multiplier bootstrap is that it’s fast. But in order to use it, you have
+to work out the influence function for the estimator of *ATT(g,t)*.
+Although I pretty much always end up doing this, it can be tedious, and
+it can be nice to get a working version of the code for a project going
+before working out the details on the influence function.
+
+The `pte` package can be used with the empirical bootstrap. There are a
+few limitations. First, it’s going to be substantially slower. Second,
+this code just reports pointwise standard errors. This basically is set
+up to fit into my workflow, and I see this as a way to get preliminary
+results.
+
+Let’s demonstrate it. To do this, consider the same setup as in Example
+1, but where no influence function is returned. Let’s write the code for
+this:
+
+``` r
+# did with no influence function
+did_attgt_noif <- function(gt_data, xformla, ...) {
+
+  # call original function
+  did_gt <- did_attgt(gt_data, xformla, ...)
+
+  # remove influence function
+  did_gt$inf_func <- NULL
+
+  did_gt
+}
+```
+
+Now, we can show the same sorts of results as above
+
+``` r
+did_res_noif <- pte(yname="lemp",
+                    gname="first.treat",
+                    tname="year",
+                    idname="countyreal",
+                    data=mpdta,
+                    subset_fun=two_by_two_subset,
+                    attgt_fun=did_attgt_noif, #this is only diff.
+                    xformla=~lpop) 
+
+summary(did_res_noif)
+#> 
+#> Overall ATT:  
+#>      ATT    Std. Error     [ 95%  Conf. Int.]  
+#>  -0.0323        0.0123    -0.0563     -0.0082 *
+#> 
+#> 
+#> Dynamic Effects:
+#>  Event Time Estimate Std. Error [95% Pointwise  Conf. Band]  
+#>          -3   0.0269     0.0124          0.0026      0.0513 *
+#>          -2  -0.0050     0.0122         -0.0288      0.0189  
+#>          -1  -0.0229     0.0124         -0.0472      0.0015  
+#>           0  -0.0201     0.0117         -0.0430      0.0027  
+#>           1  -0.0547     0.0171         -0.0883     -0.0211 *
+#>           2  -0.1382     0.0357         -0.2081     -0.0683 *
+#>           3  -0.1069     0.0365         -0.1785     -0.0353 *
+#> ---
+#> Signif. codes: `*' confidence band does not cover 0
+ggpte(did_res_noif)
+```
+
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->

@@ -18,5 +18,7 @@ Imports:
     did (>= 2.0.0),
     ggplot2,
     DRDID,
-    tidyr
+    tidyr,
+    dplyr,
+    pbapply
 

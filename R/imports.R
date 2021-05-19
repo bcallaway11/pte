@@ -6,4 +6,6 @@
 #' @import stats
 #' @import utils
 #' @import ggplot2
+#' @import tidyr
+#' @importFrom dplyr bind_rows group_by group_map inner_join mutate transmute
 NULL

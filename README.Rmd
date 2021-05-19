@@ -17,6 +17,7 @@ BMisc::source_all("~/Dropbox/pte/R/")
 BMisc::source_all("~/Dropbox/ppe/R/")
 load("~/Dropbox/ppe/data/covid_data.rda")
 library(ggplot2)
+library(dplyr)
 ```
 # Panel Treatment Effects (pte) Package
 
@@ -34,13 +35,13 @@ The [`did` package](https://bcallaway11.github.io/did/), which is based on [Call
 library(did)
 data(mpdta)
 did_res <- pte(yname="lemp",
-           gname="first.treat",
-           tname="year",
-           idname="countyreal",
-           data=mpdta,
-           subset_fun=two_by_two_subset,
-           attgt_fun=did_attgt,
-           xformla=~lpop) 
+               gname="first.treat",
+               tname="year",
+               idname="countyreal",
+               data=mpdta,
+               subset_fun=two_by_two_subset,
+               attgt_fun=did_attgt,
+               xformla=~lpop) 
 
 summary(did_res)
 ggpte(did_res)
@@ -96,4 +97,41 @@ ggpte(covid_res) + ylim(c(-1000,1000))
 ```
 
 What's most interesting is just how little code needs to be written here.  The only new code required is the `ppe::covid_attgt` function which is [available here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R), and, as you can see, this is very simple.  
+
+
+## Example 3: Empirical Bootstrap
+
+The code above used the multiplier bootstrap.  The great thing about the multiplier bootstrap is that it's fast.  But in order to use it, you have to work out the influence function for the estimator of *ATT(g,t)*.  Although I pretty much always end up doing this, it can be tedious, and it can be nice to get a working version of the code for a project going before working out the details on the influence function.  
+
+The `pte` package can be used with the empirical bootstrap.  There are a few limitations.  First, it's going to be substantially slower.  Second, this code just reports pointwise standard errors.  This basically is set up to fit into my workflow, and I see this as a way to get preliminary results.
+
+Let's demonstrate it.  To do this, consider the same setup as in Example 1, but where no influence function is returned.  Let's write the code for this:
+```{r}
+# did with no influence function
+did_attgt_noif <- function(gt_data, xformla, ...) {
+
+  # call original function
+  did_gt <- did_attgt(gt_data, xformla, ...)
+
+  # remove influence function
+  did_gt$inf_func <- NULL
+
+  did_gt
+}
+```
+
+Now, we can show the same sorts of results as above
+```{r}
+did_res_noif <- pte(yname="lemp",
+                    gname="first.treat",
+                    tname="year",
+                    idname="countyreal",
+                    data=mpdta,
+                    subset_fun=two_by_two_subset,
+                    attgt_fun=did_attgt_noif, #this is only diff.
+                    xformla=~lpop) 
+
+summary(did_res_noif)
+ggpte(did_res_noif)
+```
 

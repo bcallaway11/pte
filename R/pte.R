@@ -48,7 +48,7 @@ compute.pte <- function(ptep,
   counter <- 1
   nG <- length(groups)
   nT <- length(time.periods)
-  inffunc <- matrix(data=0, nrow=n, ncol=nG*(nT))
+  inffunc <- matrix(data=NA, nrow=n, ncol=nG*(nT))
   
   # loop over all groups
   for (g in groups) {
@@ -81,12 +81,15 @@ compute.pte <- function(ptep,
       #     function
       #-----------------------------------------------------------------------------
 
+      # save results
+      attgt.list[[counter]] <- list(att=attgt$attgt, group=g, time.period=tp)
+
+
+      # code if influence function is available
       if ( !is.null(attgt$inf_func) ) {
         # adjust for relative sizes of overall data
         # and groups used for this attgt
         attgt$inf_func <- (n/n1)*attgt$inf_func
-        # save results
-        attgt.list[[counter]] <- list(att=attgt$attgt, group=g, time.period=tp)
 
         this.inf_func <- rep(0,n)
         this.inf_func[disidx] <- attgt$inf_func
@@ -181,8 +184,16 @@ pte <- function(yname,
                      attgt_fun=attgt_fun,
                      ...)
 
-
-  
+  # check if no influence function provided,
+  # if yes, go to alternate code for empirical
+  # bootstrap
+  if (all(is.na(res$inffunc))) {
+    return(panel_empirical_bootstrap(res$attgt.list,
+                                     ptep,
+                                     subset_fun,
+                                     attgt_fun,
+                                     ...))
+  }  
   att_gt <- process_att_gt(res,ptep)
 
   #-----------------------------------------------------------------------------
@@ -209,3 +220,4 @@ pte <- function(yname,
   
   out
 }
+

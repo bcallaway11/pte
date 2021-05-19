@@ -321,3 +321,97 @@ gt_data_frame <- function(data) {
   data
 }
   
+#' @title pte_emp_boot
+#'
+#' @title Class for holding \code{pte} empirical bootstrap results
+#'
+#' @param attgt_results \code{data.frame} holding attgt results
+#' @param overall_results \code{data.frame} holding overall results
+#' @param group_results \code{data.frame} holding group results
+#' @param dyn_results \code{data.frame} holding dynamic results
+#'
+#' @return pte_emp_boot object
+#'
+#' @export
+pte_emp_boot <- function(attgt_results,
+                         overall_results,
+                         group_results,
+                         dyn_results) {
+
+  out <- list(attgt_results=attgt_results,
+              overall_results=overall_results,
+              group_results=group_results,
+              dyn_results=dyn_results)
+
+  class(out) <- "pte_emp_boot"
+
+  out
+}
+
+#' @title summary.pte_emp_boot
+#'
+#' @description Summary for \code{pte_emp_boot} object
+#'
+#' @param object a \code{pte_emp_boot} object
+#' @param ... additional function arguments
+#'
+#' @return \code{summary.pte_results} object
+#'
+#' @export
+summary.pte_emp_boot <- function(object, ...) {
+
+  overall_att <- object$overall_results$att
+  overall_se <- object$overall_results$se
+
+  #event_study <- object$event_study
+  event_study_att <- object$dyn_results$att.e
+  event_study_se <- object$dyn_results$se
+  event_study_e <- object$dyn_results$e
+  
+  # overall estimates
+  alp <- .05 # hard coded
+  pointwise_cval <- qnorm(1-alp/2)
+  overall_cband_upper <- overall_att + pointwise_cval*overall_se
+  overall_cband_lower <- overall_att - pointwise_cval*overall_se
+  out1 <- cbind.data.frame(overall_att, overall_se, overall_cband_lower, overall_cband_upper)
+  out1 <- round(out1, 4)
+  overall_sig <- (overall_cband_upper < 0) | (overall_cband_lower > 0)
+  overall_sig[is.na(overall_sig)] <- FALSE
+  overall_sig_text <- ifelse(overall_sig, "*", "")
+  out1 <- cbind.data.frame(out1, overall_sig_text)
+  
+
+  # Event study
+  # header
+  bstrap <- TRUE
+  cband <- FALSE
+  cband_text1a <- paste0(100*(1-alp),"% ")
+  cband_text1b <- ifelse(bstrap,
+                         ifelse(cband, "Simult. ", "Pointwise "),
+                         "Pointwise ")
+  cband_text1 <- paste0("[", cband_text1a, cband_text1b)
+
+  cband_lower <- event_study_att - pointwise_cval*event_study_se
+  cband_upper <- event_study_att + pointwise_cval*event_study_se
+
+  sig <- (cband_upper < 0) | (cband_lower > 0)
+  sig[is.na(sig)] <- FALSE
+  sig_text <- ifelse(sig, "*", "")
+
+  out2 <- cbind.data.frame(event_study_e, event_study_att, event_study_se, cband_lower, cband_upper)
+  out2 <- round(out2, 4)
+  out2 <- cbind.data.frame(out2, sig_text)
+
+  c1name <- "Event Time"
+  colnames(out2) <- c(c1name, "Estimate","Std. Error", cband_text1, "Conf. Band]", "")
+  
+  out <- list(overall_att=out1,
+              event_study=out2,
+              alp=alp,
+              bstrap=bstrap,
+              cband=cband)
+
+  class(out) <- "summary.pte_results"
+
+  out
+}
