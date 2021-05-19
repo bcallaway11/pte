@@ -28,7 +28,8 @@ Here are a couple of examples:
 
 ## Example 1: Difference in differences
 
-The [`did` package](https://bcallaway11.github.io/did/), which is based on [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001) includes estimates of group-time average treatment effects, $ATT(g,t)$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
+The [`did` package](https://bcallaway11.github.io/did/), which is based on [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001), includes estimates of group-time average treatment effects, $$ATT(g,t)$$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
+
 ```{r}
 library(did)
 data(mpdta)
@@ -44,6 +45,7 @@ did_res <- pte(yname="lemp",
 summary(did_res)
 ggpte(did_res)
 ```
+
 What's most interesting here, is that the only "new" code that needs to be writte is in the `did_attgt` function [available here](https://github.com/bcallaway11/pte/blob/master/R/attgt_functions.R).  You will see that this is a very small amount of code.
 
 ## Example 2: Policy Evaluation during a Pandemic
