@@ -18,8 +18,14 @@ Here are a couple of examples:
 
 ## Example 1: Difference in differences
 
-*Note:* This is not the recommended way of doing this (as there is very
-little error handling, etc. here), but it is rather a proof of concept.
+The [`did` package](https://bcallaway11.github.io/did/) includes
+estimates of group-time average treatment effects, \(ATT(g,t)\), based
+on a difference in differences identification strategy. The following
+example demonstrates that it is easy to compute group-time average
+treatment effects using difference in differences using the `pte`
+package. \[*Note:* This is definitely not the recommended way of doing
+this (as there is very little error handling, etc. here), but it is
+rather a proof of concept.\]
 
 ``` r
 library(did)
@@ -37,18 +43,18 @@ summary(did_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.]  
-#>  -0.0323        0.0131    -0.0579     -0.0066 *
+#>  -0.0323        0.0137     -0.059     -0.0055 *
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error   [95%  Conf. Band]  
-#>          -3   0.0269     0.0108 -0.0030      0.0569  
-#>          -2  -0.0050     0.0120 -0.0384      0.0285  
-#>          -1  -0.0229     0.0165 -0.0687      0.0230  
-#>           0  -0.0201     0.0115 -0.0522      0.0119  
-#>           1  -0.0547     0.0134 -0.0920     -0.0175 *
-#>           2  -0.1382     0.0341 -0.2331     -0.0433 *
-#>           3  -0.1069     0.0315 -0.1945     -0.0193 *
+#>          -3   0.0269     0.0132 -0.0063      0.0602  
+#>          -2  -0.0050     0.0133 -0.0386      0.0287  
+#>          -1  -0.0229     0.0181 -0.0685      0.0228  
+#>           0  -0.0201     0.0111 -0.0482      0.0079  
+#>           1  -0.0547     0.0162 -0.0956     -0.0139 *
+#>           2  -0.1382     0.0385 -0.2353     -0.0411 *
+#>           3  -0.1069     0.0358 -0.1972     -0.0166 *
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(did_res)
@@ -62,8 +68,20 @@ You will see that this is a very small amount of code.
 
 ## Example 2: Policy Evaluation during a Pandemic
 
-This comes from [Callaway and Li
-(2021)](https://arxiv.org/abs/2105.06927).
+As a next example, consider trying to estimate effects of Covid-19
+related policies during a pandemic (the estimates below are for the
+effects of state-leve shelter-in-place orders during the early part of
+the pandemic).
+
+Callaway and Li (2021) argue that a particular unconfoundedness-type
+strategy is more appropriate in this context than DID-type strategies
+due to the spread of Covid-19 cases being highly nonlinear. However,
+they still deal with the challenge of variation in treatment timing.
+Therefore, it is still useful to think about group-time average
+treatment effects, but the DID strategy should be replaced with their
+particular unconfoundedness type assumption.
+
+The `pte` package is particularly useful here.
 
 ``` r
 # formula for covariates
@@ -86,43 +104,43 @@ summary(covid_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.] 
-#>  14.8882        77.553  -137.1129    166.8892 
+#>  14.8882       74.9824  -132.0746    161.8509 
 #> 
 #> 
 #> Dynamic Effects:
-#>  Event Time Estimate Std. Error     [95%  Conf. Band]  
-#>         -10  -3.7266     3.6125  -12.8736      5.4203  
-#>          -9   2.6607     1.7348   -1.7319      7.0533  
-#>          -8   0.8290     2.2388   -4.8396      6.4976  
-#>          -7   5.2843     1.8953    0.4855     10.0831 *
-#>          -6   2.8555     2.0560   -2.3502      8.0613  
-#>          -5   1.3589     3.7756   -8.2008     10.9187  
-#>          -4   0.3294     3.6367   -8.8787      9.5375  
-#>          -3  -4.2227     4.8141  -16.4120      7.9667  
-#>          -2  -3.8447     3.2166  -11.9893      4.2998  
-#>          -1  -0.2234     3.6594   -9.4889      9.0421  
-#>           0 -10.8156     9.9308  -35.9604     14.3291  
-#>           1 -13.7998    15.4408  -52.8962     25.2965  
-#>           2  -7.8432     8.5558  -29.5064     13.8201  
-#>           3  -4.5541    12.7291  -36.7843     27.6760  
-#>           4  -3.5368    10.5843  -30.3363     23.2627  
-#>           5   8.5221    13.0787  -24.5933     41.6375  
-#>           6   1.1140    22.1987  -55.0931     57.3211  
-#>           7   6.6384    22.9861  -51.5625     64.8394  
-#>           8   7.1288    24.8603  -55.8177     70.0753  
-#>           9  10.8758    32.6271  -71.7363     93.4880  
-#>          10  17.5057    35.6081  -72.6543    107.6657  
-#>          11  40.8318    45.3079  -73.8880    155.5516  
-#>          12  48.6134    48.9781  -75.3996    172.6264  
-#>          13  52.4228    69.6198 -123.8551    228.7007  
-#>          14  50.2000    58.7475  -98.5490    198.9490  
-#>          15  68.2960    73.9277 -118.8895    255.4816  
-#>          16  44.7305    63.8885 -117.0356    206.4967  
-#>          17  61.4670    81.1021 -143.8841    266.8181  
-#>          18  50.4635   120.0314 -253.4569    354.3839  
-#>          19  47.3392   105.1978 -219.0224    313.7008  
-#>          20  28.6326   120.8400 -277.3351    334.6003  
-#>          21   4.3445   151.1525 -378.3746    387.0637  
+#>  Event Time Estimate Std. Error     [95%  Conf. Band] 
+#>         -10  -3.7266     3.7679  -14.0196      6.5663 
+#>          -9   2.6607     1.7434   -2.1019      7.4232 
+#>          -8   0.8290     2.8265   -6.8922      8.5501 
+#>          -7   5.2843     2.3024   -1.0053     11.5740 
+#>          -6   2.8555     1.8870   -2.2992      8.0102 
+#>          -5   1.3589     3.4921   -8.1806     10.8985 
+#>          -4   0.3294     4.0894  -10.8419     11.5006 
+#>          -3  -4.2227     5.5966  -19.5110     11.0657 
+#>          -2  -3.8447     2.7082  -11.2427      3.5532 
+#>          -1  -0.2234     3.6777  -10.2699      9.8231 
+#>           0 -10.8156     8.8015  -34.8591     13.2278 
+#>           1 -13.7998    15.6598  -56.5783     28.9786 
+#>           2  -7.8432    10.6400  -36.9088     21.2225 
+#>           3  -4.5541    10.5309  -33.3218     24.2135 
+#>           4  -3.5368    15.3115  -45.3638     38.2902 
+#>           5   8.5221    11.4969  -22.8845     39.9287 
+#>           6   1.1140    19.3970  -51.8735     54.1015 
+#>           7   6.6384    19.1366  -45.6377     58.9146 
+#>           8   7.1288    28.9177  -71.8669     86.1244 
+#>           9  10.8758    28.1257  -65.9562     87.7078 
+#>          10  17.5057    32.1605  -70.3483    105.3597 
+#>          11  40.8318    41.3817  -72.2123    153.8758 
+#>          12  48.6134    48.0232  -82.5737    179.8004 
+#>          13  52.4228    52.3926  -90.7003    195.5459 
+#>          14  50.2000    61.0556 -116.5881    216.9882 
+#>          15  68.2960    96.1981 -194.4924    331.0844 
+#>          16  44.7305    86.0985 -190.4683    279.9293 
+#>          17  61.4670   117.7683 -260.2455    383.1794 
+#>          18  50.4635   113.6294 -259.9427    360.8697 
+#>          19  47.3392   131.6992 -312.4289    407.1073 
+#>          20  28.6326   106.5689 -262.4860    319.7512 
+#>          21   4.3445   144.4024 -390.1255    398.8146 
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(covid_res) + ylim(c(-1000,1000))
@@ -130,7 +148,7 @@ ggpte(covid_res) + ylim(c(-1000,1000))
 
 ![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
-What’s most interesting here is just how little code needs to be written
+What’s most interesting is just how little code needs to be written
 here. The only new code required is the `ppe::covid_attgt` function
 which is [available
 here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R),

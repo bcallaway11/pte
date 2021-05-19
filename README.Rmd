@@ -28,7 +28,7 @@ Here are a couple of examples:
 
 ## Example 1: Difference in differences
 
-*Note:* This is not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.
+The [`did` package](https://bcallaway11.github.io/did/) includes estimates of group-time average treatment effects, $ATT(g,t)$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
 ```{r}
 library(did)
 data(mpdta)
@@ -48,7 +48,11 @@ What's most interesting here, is that the only "new" code that needs to be writt
 
 ## Example 2: Policy Evaluation during a Pandemic
 
-This comes from [Callaway and Li (2021)](https://arxiv.org/abs/2105.06927).
+As a next example, consider trying to estimate effects of Covid-19 related policies during a pandemic (the estimates below are for the effects of state-leve shelter-in-place orders during the early part of the pandemic).  
+
+Callaway and Li (2021) argue that a particular unconfoundedness-type strategy is more appropriate in this context than DID-type strategies due to the spread of Covid-19 cases being highly nonlinear.  However, they still deal with the challenge of variation in treatment timing.  Therefore, it is still useful to think about group-time average treatment effects, but the DID strategy should be replaced with their particular unconfoundedness type assumption.  
+
+The `pte` package is particularly useful here.  
 
 ```{r}
 # formula for covariates
@@ -89,5 +93,5 @@ summary(covid_res)
 ggpte(covid_res) + ylim(c(-1000,1000))
 ```
 
-What's most interesting here is just how little code needs to be written here.  The only new code required is the `ppe::covid_attgt` function which is [available here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R), and, as you can see, this is very simple.
+What's most interesting is just how little code needs to be written here.  The only new code required is the `ppe::covid_attgt` function which is [available here](https://github.com/bcallaway11/ppe/blob/master/R/covid_attgt.R), and, as you can see, this is very simple.  
 
