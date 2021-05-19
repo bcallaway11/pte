@@ -28,7 +28,7 @@ Here are a couple of examples:
 
 ## Example 1: Difference in differences
 
-The [`did` package](https://bcallaway11.github.io/did/) includes estimates of group-time average treatment effects, $ATT(g,t)$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
+The [`did` package](https://bcallaway11.github.io/did/), which is based on [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001) includes estimates of group-time average treatment effects, $ATT(g,t)$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
 ```{r}
 library(did)
 data(mpdta)
@@ -50,7 +50,7 @@ What's most interesting here, is that the only "new" code that needs to be writt
 
 As a next example, consider trying to estimate effects of Covid-19 related policies during a pandemic (the estimates below are for the effects of state-leve shelter-in-place orders during the early part of the pandemic).  
 
-Callaway and Li (2021) argue that a particular unconfoundedness-type strategy is more appropriate in this context than DID-type strategies due to the spread of Covid-19 cases being highly nonlinear.  However, they still deal with the challenge of variation in treatment timing.  Therefore, it is still useful to think about group-time average treatment effects, but the DID strategy should be replaced with their particular unconfoundedness type assumption.  
+[Callaway and Li (2021)](https://arxiv.org/abs/2105.06927) argue that a particular unconfoundedness-type strategy is more appropriate in this context than DID-type strategies due to the spread of Covid-19 cases being highly nonlinear.  However, they still deal with the challenge of variation in treatment timing.  Therefore, it is still useful to think about group-time average treatment effects, but the DID strategy should be replaced with their particular unconfoundedness type assumption.  
 
 The `pte` package is particularly useful here.  
 

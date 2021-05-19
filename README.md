@@ -18,7 +18,9 @@ Here are a couple of examples:
 
 ## Example 1: Difference in differences
 
-The [`did` package](https://bcallaway11.github.io/did/) includes
+The [`did` package](https://bcallaway11.github.io/did/), which is based
+on [Callaway and Sant’Anna
+(2021)](https://doi.org/10.1016/j.jeconom.2020.12.001) includes
 estimates of group-time average treatment effects, \(ATT(g,t)\), based
 on a difference in differences identification strategy. The following
 example demonstrates that it is easy to compute group-time average
@@ -38,23 +40,27 @@ did_res <- pte(yname="lemp",
            subset_fun=two_by_two_subset,
            attgt_fun=did_attgt,
            xformla=~lpop) 
+#> Warning in compute.aggte(MP = MP, type = type, balance_e = balance_e, min_e
+#> = min_e, : Simultaneous conf. band is somehow smaller than pointwise one
+#> using normal approximation. Since this is unusual, we are reporting pointwise
+#> confidence intervals
 
 summary(did_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.]  
-#>  -0.0323        0.0137     -0.059     -0.0055 *
+#>  -0.0323        0.0126     -0.057     -0.0076 *
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error   [95%  Conf. Band]  
-#>          -3   0.0269     0.0132 -0.0063      0.0602  
-#>          -2  -0.0050     0.0133 -0.0386      0.0287  
-#>          -1  -0.0229     0.0181 -0.0685      0.0228  
-#>           0  -0.0201     0.0111 -0.0482      0.0079  
-#>           1  -0.0547     0.0162 -0.0956     -0.0139 *
-#>           2  -0.1382     0.0385 -0.2353     -0.0411 *
-#>           3  -0.1069     0.0358 -0.1972     -0.0166 *
+#>          -3   0.0269     0.0124 -0.0048      0.0587  
+#>          -2  -0.0050     0.0138 -0.0404      0.0305  
+#>          -1  -0.0229     0.0117 -0.0530      0.0072  
+#>           0  -0.0201     0.0125 -0.0521      0.0118  
+#>           1  -0.0547     0.0174 -0.0994     -0.0101 *
+#>           2  -0.1382     0.0382 -0.2362     -0.0402 *
+#>           3  -0.1069     0.0366 -0.2008     -0.0130 *
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(did_res)
@@ -73,13 +79,13 @@ related policies during a pandemic (the estimates below are for the
 effects of state-leve shelter-in-place orders during the early part of
 the pandemic).
 
-Callaway and Li (2021) argue that a particular unconfoundedness-type
-strategy is more appropriate in this context than DID-type strategies
-due to the spread of Covid-19 cases being highly nonlinear. However,
-they still deal with the challenge of variation in treatment timing.
-Therefore, it is still useful to think about group-time average
-treatment effects, but the DID strategy should be replaced with their
-particular unconfoundedness type assumption.
+[Callaway and Li (2021)](https://arxiv.org/abs/2105.06927) argue that a
+particular unconfoundedness-type strategy is more appropriate in this
+context than DID-type strategies due to the spread of Covid-19 cases
+being highly nonlinear. However, they still deal with the challenge of
+variation in treatment timing. Therefore, it is still useful to think
+about group-time average treatment effects, but the DID strategy should
+be replaced with their particular unconfoundedness type assumption.
 
 The `pte` package is particularly useful here.
 
@@ -104,43 +110,43 @@ summary(covid_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.] 
-#>  14.8882       74.9824  -132.0746    161.8509 
+#>  14.8882       78.5352  -139.0381    168.8144 
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error     [95%  Conf. Band] 
-#>         -10  -3.7266     3.7679  -14.0196      6.5663 
-#>          -9   2.6607     1.7434   -2.1019      7.4232 
-#>          -8   0.8290     2.8265   -6.8922      8.5501 
-#>          -7   5.2843     2.3024   -1.0053     11.5740 
-#>          -6   2.8555     1.8870   -2.2992      8.0102 
-#>          -5   1.3589     3.4921   -8.1806     10.8985 
-#>          -4   0.3294     4.0894  -10.8419     11.5006 
-#>          -3  -4.2227     5.5966  -19.5110     11.0657 
-#>          -2  -3.8447     2.7082  -11.2427      3.5532 
-#>          -1  -0.2234     3.6777  -10.2699      9.8231 
-#>           0 -10.8156     8.8015  -34.8591     13.2278 
-#>           1 -13.7998    15.6598  -56.5783     28.9786 
-#>           2  -7.8432    10.6400  -36.9088     21.2225 
-#>           3  -4.5541    10.5309  -33.3218     24.2135 
-#>           4  -3.5368    15.3115  -45.3638     38.2902 
-#>           5   8.5221    11.4969  -22.8845     39.9287 
-#>           6   1.1140    19.3970  -51.8735     54.1015 
-#>           7   6.6384    19.1366  -45.6377     58.9146 
-#>           8   7.1288    28.9177  -71.8669     86.1244 
-#>           9  10.8758    28.1257  -65.9562     87.7078 
-#>          10  17.5057    32.1605  -70.3483    105.3597 
-#>          11  40.8318    41.3817  -72.2123    153.8758 
-#>          12  48.6134    48.0232  -82.5737    179.8004 
-#>          13  52.4228    52.3926  -90.7003    195.5459 
-#>          14  50.2000    61.0556 -116.5881    216.9882 
-#>          15  68.2960    96.1981 -194.4924    331.0844 
-#>          16  44.7305    86.0985 -190.4683    279.9293 
-#>          17  61.4670   117.7683 -260.2455    383.1794 
-#>          18  50.4635   113.6294 -259.9427    360.8697 
-#>          19  47.3392   131.6992 -312.4289    407.1073 
-#>          20  28.6326   106.5689 -262.4860    319.7512 
-#>          21   4.3445   144.4024 -390.1255    398.8146 
+#>         -10  -3.7266     3.9879  -13.9130      6.4598 
+#>          -9   2.6607     1.2830   -0.6166      5.9379 
+#>          -8   0.8290     1.9977   -4.2738      5.9317 
+#>          -7   5.2843     2.6228   -1.4150     11.9837 
+#>          -6   2.8555     1.6957   -1.4758      7.1868 
+#>          -5   1.3589     3.8776   -8.5456     11.2635 
+#>          -4   0.3294     4.0663  -10.0572     10.7160 
+#>          -3  -4.2227     4.9141  -16.7747      8.3294 
+#>          -2  -3.8447     2.6881  -10.7109      3.0214 
+#>          -1  -0.2234     3.4578   -9.0556      8.6089 
+#>           0 -10.8156     9.6646  -35.5018     13.8705 
+#>           1 -13.7998    14.5361  -50.9292     23.3295 
+#>           2  -7.8432    10.1117  -33.6713     17.9850 
+#>           3  -4.5541    10.2906  -30.8394     21.7311 
+#>           4  -3.5368    12.5854  -35.6835     28.6099 
+#>           5   8.5221    12.7553  -24.0586     41.1028 
+#>           6   1.1140    18.4808  -46.0912     48.3192 
+#>           7   6.6384    18.1989  -39.8469     53.1238 
+#>           8   7.1288    21.6655  -48.2112     62.4687 
+#>           9  10.8758    35.0682  -78.6985    100.4501 
+#>          10  17.5057    30.8734  -61.3541     96.3655 
+#>          11  40.8318    43.6360  -70.6272    152.2908 
+#>          12  48.6134    46.3820  -69.8597    167.0864 
+#>          13  52.4228    63.8458 -110.6579    215.5035 
+#>          14  50.2000    64.4851 -114.5137    214.9138 
+#>          15  68.2960    72.3489 -116.5042    253.0962 
+#>          16  44.7305    91.5393 -189.0875    278.5485 
+#>          17  61.4670    88.7371 -165.1934    288.1273 
+#>          18  50.4635    99.9847 -204.9265    305.8535 
+#>          19  47.3392   114.5371 -245.2219    339.9003 
+#>          20  28.6326   142.3240 -334.9042    392.1694 
+#>          21   4.3445   130.7575 -329.6480    338.3371 
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(covid_res) + ylim(c(-1000,1000))
