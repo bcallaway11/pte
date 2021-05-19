@@ -25,11 +25,23 @@ The `pte` package compartmentalizes the steps needed to implement estimators of 
 
 This code is lightweight, only works for balanced panels, and has minimal error checking.  That said, it should be useful projects that build on top of group-time average treatment effects in order to deliver estimates of causal effects in panel data settings.
 
-Here are a couple of examples:
+The main function is called `pte`.  The most important paramters that it takes in are `subset_fun` and `attgt_fun`.  These are functions that the user should pass to `pte`.  
+
+`subset_fun` takes in the overall data, a group, a time period, and possibly other arguments and returns a `data.frame` containing the relevant subset of the data, an outcome, and whether or not a unit should be considered to be in the treated or comparison group for that group/time.  There is one example of a relevant subset function provided in the package: [the `two_by_two_subset` function](https://github.com/bcallaway11/pte/blob/master/R/subset_functions.R). This function takes an original dataset, subsets it into pre- and post-treatment periods and denotes treated and untreated units.  This particular subset is perhaps the most common/important one for thinking about treatment effects with panel data.
+
+The other main function is `attgt_fun`.  This function should be able to take in the correct subset of data, possibly along with other arguments to the function, and report an *ATT* for that subset.  With minor modification, this function should be availble for most any sort of treatment effects application --- for example, if you can solve the baseline 2x2 case in difference in differences, you should use that function here, and the `pte` package will take care of dealing with the variation in treatment timing.  
+
+If `attgt_fun` returns an influence function, then the `pte` package will also conduct inference using the multiplier bootstrap (which is fast) and produce uniform confidence bands (which adjust for multiple testing).  
+
+The default output of `pte` is an overall treatment effect on the treated (i.e., across all groups that participate in the treatment in any time period) and dynamic effects (i.e., event studies).  More aggregations are possible, but these seem to be the leading cases; aggregations of group-time average treatment effects are discussed at length in [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001).
+
+Here are a few examples:
 
 ## Example 1: Difference in differences
 
-The [`did` package](https://bcallaway11.github.io/did/), which is based on [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001), includes estimates of group-time average treatment effects, $$ATT(g,t)$$, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this (as there is very little error handling, etc. here), but it is rather a proof of concept.]
+The [`did` package](https://bcallaway11.github.io/did/), which is based on [Callaway and Sant'Anna (2021)](https://doi.org/10.1016/j.jeconom.2020.12.001), includes estimates of group-time average treatment effects, *ATT(g,t)*, based on a difference in differences identification strategy.  The following example demonstrates that it is easy to compute group-time average treatment effects using difference in differences using the `pte` package.  [*Note:* This is definitely not the recommended way of doing this as there is very little error handling, etc. here, but it is rather a proof of concept.  You should use the `did` package for this case.]
+
+This example reproduces DID estimates of the effect of the minimum wage on employment using data from the `did` package.
 
 ```{r}
 library(did)
@@ -47,11 +59,11 @@ summary(did_res)
 ggpte(did_res)
 ```
 
-What's most interesting here, is that the only "new" code that needs to be writte is in the `did_attgt` function [available here](https://github.com/bcallaway11/pte/blob/master/R/attgt_functions.R).  You will see that this is a very small amount of code.
+What's most interesting here, is that the only "new" code that needs to be writte is in [the `did_attgt` function](https://github.com/bcallaway11/pte/blob/master/R/attgt_functions.R).  You will see that this is a very small amount of code.
 
 ## Example 2: Policy Evaluation during a Pandemic
 
-As a next example, consider trying to estimate effects of Covid-19 related policies during a pandemic (the estimates below are for the effects of state-leve shelter-in-place orders during the early part of the pandemic).  
+As a next example, consider trying to estimate effects of Covid-19 related policies during a pandemic.  The estimates below are for the effects of state-leve shelter-in-place orders during the early part of the pandemic.
 
 [Callaway and Li (2021)](https://arxiv.org/abs/2105.06927) argue that a particular unconfoundedness-type strategy is more appropriate in this context than DID-type strategies due to the spread of Covid-19 cases being highly nonlinear.  However, they still deal with the challenge of variation in treatment timing.  Therefore, it is still useful to think about group-time average treatment effects, but the DID strategy should be replaced with their particular unconfoundedness type assumption.  
 
@@ -103,7 +115,7 @@ What's most interesting is just how little code needs to be written here.  The o
 
 The code above used the multiplier bootstrap.  The great thing about the multiplier bootstrap is that it's fast.  But in order to use it, you have to work out the influence function for the estimator of *ATT(g,t)*.  Although I pretty much always end up doing this, it can be tedious, and it can be nice to get a working version of the code for a project going before working out the details on the influence function.  
 
-The `pte` package can be used with the empirical bootstrap.  There are a few limitations.  First, it's going to be substantially slower.  Second, this code just reports pointwise standard errors.  This basically is set up to fit into my workflow, and I see this as a way to get preliminary results.
+The `pte` package can be used with the empirical bootstrap.  There are a few limitations.  First, it's going to be substantially slower.  Second, this code just reports pointwise confidence intervals.  However, this basically is set up to fit into my typical workflow, and I see this as a way to get preliminary results.
 
 Let's demonstrate it.  To do this, consider the same setup as in Example 1, but where no influence function is returned.  Let's write the code for this:
 ```{r}
@@ -134,4 +146,4 @@ did_res_noif <- pte(yname="lemp",
 summary(did_res_noif)
 ggpte(did_res_noif)
 ```
-
+What's exciting about this is just how little new code needs to be written.  
