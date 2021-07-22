@@ -116,10 +116,15 @@ panel_empirical_bootstrap <- function(attgt.list,
 #' @export
 attgt_pte_aggregations <- function(attgt.list, ptep) {
   # pick up all time periods
-  time.periods <- ptep$tlist
+  original_time.periods <- sort(unique(ptep$data$original_period))
+  time.periods <- sapply(ptep$tlist,
+                         t2orig, 
+                         original_time.periods)
 
   # sort the groups and drop the untreated group
-  groups <- ptep$glist
+  groups <- sapply(ptep$glist,
+                   t2orig,
+                   original_time.periods)
 
   # data
   data <- ptep$data
@@ -136,7 +141,7 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
   # calculate relative sizes of each group
   # (will be used as weights)
   n.group <- sapply(groups, function(gg) {
-    nrow(subset(data, G==gg & period==time.periods[1]))
+    nrow(subset(data, original_group==gg & original_period==time.periods[1]))
   })
   # merge in group sizes
   ngroup.mat <- cbind(groups, n.group)

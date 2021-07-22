@@ -25,22 +25,26 @@ compute.pte <- function(ptep,
   data <- as.data.frame(data)
   
   # setup data
-  G <- data[,gname]
-  id <- data[,idname]
-  period <- data[,tname]
-
-  data$G <- G
-  data$id <- id
+  # G <- data[,gname]
+  # id <- data[,idname]
+  # period <- data[,tname]
+  G <- data$G
+  id <- data$id
+  period <- data$period
+  original_groups <- sort(unique(data$original_group))[-1] # drops never treated
+  original_time.periods <- sort(unique(data$original_period))
+  
+  #data$G <- G
+  #data$id <- id
   n <- length(unique(data$id))
-  data$period <- period
-  data$Y <- data[,yname]
+  #data$period <- period
+  #data$Y <- data[,yname]
 
   # pick up all time periods
   time.periods <- ptep$tlist
 
   # sort the groups and drop the untreated group
   groups <- ptep$glist
-
 
   # list to store all group-time average treatment effects
   # that we calculate
@@ -82,7 +86,9 @@ compute.pte <- function(ptep,
       #-----------------------------------------------------------------------------
 
       # save results
-      attgt.list[[counter]] <- list(att=attgt$attgt, group=g, time.period=tp)
+      attgt.list[[counter]] <- list(att=attgt$attgt,
+                                    group=t2orig(g,original_time.periods),
+                                    time.period=t2orig(tp,original_time.periods))
 
 
       # code if influence function is available
@@ -204,7 +210,8 @@ pte <- function(yname,
                         data=data,
                         alp=alp,
                         biters=biters,
-                        cl=cl)
+                        cl=cl,
+                        ...)
   
   res <- compute.pte(ptep=ptep,
                      subset_fun=subset_fun,

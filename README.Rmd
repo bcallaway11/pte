@@ -13,8 +13,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, echo=FALSE, results="hide", warning=FALSE, message=FALSE}
-BMisc::source_all("~/Dropbox/pte/R/")
-BMisc::source_all("~/Dropbox/ppe/R/")
+devtools::load_all("~/Dropbox/pte")
+devtools::load_all("~/Dropbox/ppe")
 load("~/Dropbox/ppe/data/covid_data.rda")
 library(ggplot2)
 library(dplyr)
