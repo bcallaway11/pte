@@ -25,14 +25,14 @@ compute.pte <- function(ptep,
   data <- as.data.frame(data)
   
   # setup data
-  # G <- data[,gname]
-  # id <- data[,idname]
-  # period <- data[,tname]
-  G <- data$G
-  id <- data$id
-  period <- data$period
-  original_groups <- sort(unique(data$original_group))[-1] # drops never treated
-  original_time.periods <- sort(unique(data$original_period))
+  G <- data[,gname]
+  id <- data[,idname]
+  period <- data[,tname]
+  # G <- data$G
+  # id <- data$id
+  # period <- data$period
+  # original_groups <- sort(unique(data$original_group))[-1] # drops never treated
+  # original_time.periods <- sort(unique(data$original_period))
   
   #data$G <- G
   #data$id <- id
@@ -87,8 +87,8 @@ compute.pte <- function(ptep,
 
       # save results
       attgt.list[[counter]] <- list(att=attgt$attgt,
-                                    group=t2orig(g,original_time.periods),
-                                    time.period=t2orig(tp,original_time.periods))
+                                    group=g,#t2orig(g,original_time.periods),
+                                    time.period=tp)#t2orig(tp,original_time.periods))
 
 
       # code if influence function is available
@@ -224,6 +224,7 @@ pte <- function(yname,
   if (all(is.na(res$inffunc))) {
     return(panel_empirical_bootstrap(res$attgt.list,
                                      ptep,
+                                     setup_pte_fun,
                                      subset_fun,
                                      attgt_fun,
                                      ...))

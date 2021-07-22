@@ -66,14 +66,21 @@ process_att_gt <- function(att_gt_results, ptep) {
 
   # convert tlist and glist to be compatible with did::aggte
   # from "new" time to "original" time
-  original_time.periods <- sort(unique(ptep$data$original_period))
-  ptep$tlist <- sapply(ptep$tlist,
-                       t2orig,
-                       original_time.periods=original_time.periods)
-  ptep$glist <- sapply(ptep$glist,
-                       t2orig,
-                       original_time.periods=original_time.periods)
-  
+  original_time.periods <- sort(unique(ptep$data[,ptep$tname]))
+  if ( ! all(ptep$tlist %in% original_time.periods) ) {
+    ptep$tlist <- sapply(ptep$tlist,
+                         t2orig,
+                         original_time.periods=original_time.periods)
+    ptep$glist <- sapply(ptep$glist,
+                         t2orig,
+                         original_time.periods=original_time.periods)
+    group <- sapply(group,
+                    t2orig,
+                    original_time.periods=original_time.periods)
+    time.period <- sapply(time.period,
+                          t2orig,
+                          original_time.periods=original_time.periods)
+  }
   # Return list for ATT(g,t)
   return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
 }

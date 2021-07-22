@@ -10,6 +10,7 @@
 #' @export 
 panel_empirical_bootstrap <- function(attgt.list,
                                       ptep,
+                                      setup_pte_fun,
                                       subset_fun,
                                       attgt_fun,
                                       ...) {
@@ -32,8 +33,17 @@ panel_empirical_bootstrap <- function(attgt.list,
     # draw a bootstrap sample; here, we'll call an outside function
     bdata <- BMisc::blockBootSample(data, idname)
 
-    bptep <- ptep
-    bptep$data <- bdata
+    bptep <- setup_pte_fun(yname=ptep$yname,
+                           gname=ptep$gname,
+                           tname=ptep$tname,
+                           idname=ptep$idname,
+                           data=bdata,
+                           alp=ptep$alp,
+                           biters=ptep$biters,
+                           cl=ptep$cl,
+                           ...)
+    # bptep <- ptep
+    # bptep$data <- bdata
 
     # call our function for estimating attgt on the
     # bootstrapped data
@@ -103,7 +113,7 @@ panel_empirical_bootstrap <- function(attgt.list,
 }
 
 
-#' @title attgt_pte_aggregation
+#' @title attgt_pte_aggregations
 #'
 #' @description Aggregate group-time average treatment effects into
 #'  overall, group, and dynamic effects.  This function is only used
@@ -116,16 +126,12 @@ panel_empirical_bootstrap <- function(attgt.list,
 #' @export
 attgt_pte_aggregations <- function(attgt.list, ptep) {
   # pick up all time periods
-  original_time.periods <- sort(unique(ptep$data$original_period))
-  time.periods <- sapply(ptep$tlist,
-                         t2orig, 
-                         original_time.periods)
+  time.periods <- ptep$tlist
+  groups <- ptep$glist
+  
+  original_time.periods <- sort(unique(ptep$data[,ptep$tname]))
 
-  # sort the groups and drop the untreated group
-  groups <- sapply(ptep$glist,
-                   t2orig,
-                   original_time.periods)
-
+  
   # data
   data <- ptep$data
   
@@ -134,14 +140,31 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
   
   # this drop na att(g,t) due to violations of overlap conditions
   attgt.results <- attgt.results[complete.cases(attgt.results),]
-    
+
+  # handle unequally spaced periods
+  if ( ! (all(time.periods %in% original_time.periods)) ) {
+    time.periods <- sapply(time.periods,
+                           t2orig, 
+                           original_time.periods)
+    groups <- sapply(groups,
+                     t2orig,
+                     original_time.periods)
+
+    attgt.results$time.period <- sapply(attgt.results$time.period,
+                                        t2orig,
+                                        original_time.periods)
+    attgt.results$group <- sapply(attgt.results$group,
+                                  t2orig,
+                                  original_time.periods)
+  }
+  
   # add event time to the results
   attgt.results$e <- attgt.results$time.period - attgt.results$group
   
   # calculate relative sizes of each group
   # (will be used as weights)
   n.group <- sapply(groups, function(gg) {
-    nrow(subset(data, original_group==gg & original_period==time.periods[1]))
+    nrow(subset(data, data[,ptep$gname]==gg & data[,ptep$tname]==time.periods[1]))
   })
   # merge in group sizes
   ngroup.mat <- cbind(groups, n.group)
