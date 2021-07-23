@@ -53,6 +53,9 @@ compute.pte <- function(ptep,
   nG <- length(groups)
   nT <- length(time.periods)
   inffunc <- matrix(data=NA, nrow=n, ncol=nG*(nT))
+
+  # list to hold extra results from gt-specific calculations
+  extra_gt_returns <- list()
   
   # loop over all groups
   for (g in groups) {
@@ -87,8 +90,12 @@ compute.pte <- function(ptep,
 
       # save results
       attgt.list[[counter]] <- list(att=attgt$attgt,
-                                    group=g,#t2orig(g,original_time.periods),
-                                    time.period=tp)#t2orig(tp,original_time.periods))
+                                    group=g,
+                                    time.period=tp)
+
+      extra_gt_returns[[counter]] <- list(extra_gt_returns=attgt$extra_gt_returns,
+                                          group=g,
+                                          time.period=tp)
 
 
       # code if influence function is available
@@ -109,7 +116,7 @@ compute.pte <- function(ptep,
     }
   }
 
-  return(list(attgt.list=attgt.list, inffunc=inffunc))
+  return(list(attgt.list=attgt.list, inffunc=inffunc, extra_gt_returns=extra_gt_returns))
 
 }
 
@@ -180,6 +187,13 @@ compute.pte <- function(ptep,
 #'  (perhaps substantially) easier to code, but also will usually be (perhaps
 #'  substantially) computationally slower.
 #'
+#' @param boot_type should be one of "multiplier" (the default) or "empirical".
+#'  The multiplier bootstrap is generally much faster, but \code{attgt_fun} needs
+#'  to provide an expression for the influence function (which could be challenging
+#'  to figure out).  If no influence function is provided, then the \code{pte}
+#'  package will use the empirical bootstrap no matter what the value of this
+#'  parameter.
+#'
 #' @param ... extra arguments that can be passed to create the correct subsets
 #'  of the data (depending on \code{subset_fun}), to estimate group time
 #'  average treatment effects (depending on \code{attgt_fun}), or to
@@ -198,6 +212,7 @@ pte <- function(yname,
                 subset_fun,
                 attgt_fun,
                 alp=0.05,
+                boot_type = "multiplier",
                 biters=100,
                 cl=1,
                 ...) {
@@ -209,6 +224,7 @@ pte <- function(yname,
                         idname=idname,
                         data=data,
                         alp=alp,
+                        boot_type=boot_type,
                         biters=biters,
                         cl=cl,
                         ...)
@@ -221,12 +237,13 @@ pte <- function(yname,
   # check if no influence function provided,
   # if yes, go to alternate code for empirical
   # bootstrap
-  if (all(is.na(res$inffunc))) {
+  if (all(is.na(res$inffunc)) | ptep$boot_type=="empirical")  {
     return(panel_empirical_bootstrap(res$attgt.list,
                                      ptep,
                                      setup_pte_fun,
                                      subset_fun,
                                      attgt_fun,
+                                     extra_gt_returns=res$extra_gt_returns,
                                      ...))
   }  
   att_gt <- process_att_gt(res,ptep)
@@ -251,7 +268,8 @@ pte <- function(yname,
   out <- pte_results(att_gt=att_gt,
                      overall_att=overall_att,
                      event_study=event_study,
-                     ptep=ptep)
+                     ptep=ptep,
+                     extra_gt_returns=res$extra_gt_returns)
   
   out
 }

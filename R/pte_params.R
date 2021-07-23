@@ -30,6 +30,7 @@ setup_pte_basic <- function(yname,
                             idname,
                             data,
                             alp=0.05,
+                            boot_type="multiplier",
                             biters=100,
                             cl=1,
                             ...) {
@@ -64,6 +65,7 @@ setup_pte_basic <- function(yname,
                        glist=groups,
                        tlist=time.periods,
                        alp=alp,
+                       boot_type=boot_type,
                        biters=biters,
                        cl=cl)
 
@@ -94,6 +96,7 @@ setup_pte <- function(yname,
                       required_pre_periods=1,
                       anticipation=0,
                       alp=0.05,
+                      boot_type=boot_type,
                       biters=100,
                       cl=1,
                       ...) {
@@ -146,7 +149,10 @@ setup_pte <- function(yname,
   time.periods <- sort(time.periods)[-seq(1,required_pre_periods)]
   groups <- groups[groups %in% time.periods]
   # account for anticipation
-  groups <- groups[ groups >= (min(time.periods)+anticipation) ] 
+  groups <- groups[ groups >= (min(time.periods)+anticipation) ]
+
+  # drop early treated groups
+  data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
 
   params <- pte_params(yname=yname,
                        gname=gname,
@@ -156,6 +162,7 @@ setup_pte <- function(yname,
                        glist=groups,
                        tlist=time.periods,
                        alp=alp,
+                       boot_type=boot_type,
                        biters=biters,
                        cl=cl)
 
@@ -218,6 +225,7 @@ pte_params <- function(yname,
                        glist,
                        tlist,
                        alp,
+                       boot_type,
                        biters,
                        cl) {
 
@@ -229,6 +237,7 @@ pte_params <- function(yname,
               glist=glist,
               tlist=tlist,
               alp=alp,
+              boot_type=boot_type,
               biters=biters,
               cl=cl)
 

@@ -135,12 +135,14 @@ print.group_time_att <- function(x,...) {
 pte_results <- function(att_gt,
                         overall_att,
                         event_study,
-                        ptep) {
+                        ptep,
+                        extra_gt_returns) {
 
   out <- list(att_gt=att_gt,
               overall_att=overall_att,
               event_study=event_study,
-              ptep=ptep)
+              ptep=ptep,
+              extra_gt_returns=extra_gt_returns)
 
   class(out) <- "pte_results"
 
@@ -266,13 +268,19 @@ print.summary.pte_results <- function(x,...) {
 #'
 #' @param attgt group-time average treatment effect
 #' @param inf_func influence function
+#' @param extra_gt_returns A place to return anything extra from particular
+#'  group-time average treatment effect calculations.  For DID, this might
+#'  be something like propensity score estimates, regressions of untreated
+#'  potential outcomes on covariates.  For ife, this could be something
+#'  like the first step regression 2sls estimates.  This argument is also
+#'  potentially useful for debugging.
 #'
 #' @return attgt_if object
 #'
 #' @export
-attgt_if <- function(attgt, inf_func) {
+attgt_if <- function(attgt, inf_func, extra_gt_returns=NULL) {
 
-  out <- list(attgt=attgt, inf_func=inf_func)
+  out <- list(attgt=attgt, inf_func=inf_func, extra_gt_returns=extra_gt_returns)
   class(out) <- "attgt_if"
   out
 }
@@ -282,14 +290,14 @@ attgt_if <- function(attgt, inf_func) {
 #' @description Class for holding group-time average treatment effects
 #'  which don't include influence functions
 #'
-#' @param attgt group-time average treatment effect
+#' @inheritParams attgt_if
 #'
 #' @return attgt_if object
 #'
 #' @export
-attgt_noif <- function(attgt) {
+attgt_noif <- function(attgt, extra_gt_returns=NULL) {
 
-  out <- list(attgt=attgt$ATT)
+  out <- list(attgt=attgt$ATT, extra_gt_returns=extra_gt_returns)
   class(out) <- "attgt_noif"
   out
 }
@@ -336,12 +344,14 @@ gt_data_frame <- function(data) {
 pte_emp_boot <- function(attgt_results,
                          overall_results,
                          group_results,
-                         dyn_results) {
+                         dyn_results,
+                         extra_gt_returns) {
 
   out <- list(attgt_results=attgt_results,
               overall_results=overall_results,
               group_results=group_results,
-              dyn_results=dyn_results)
+              dyn_results=dyn_results,
+              extra_gt_returns=extra_gt_returns)
 
   class(out) <- "pte_emp_boot"
 

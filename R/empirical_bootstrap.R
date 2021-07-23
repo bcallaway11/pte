@@ -13,6 +13,7 @@ panel_empirical_bootstrap <- function(attgt.list,
                                       setup_pte_fun,
                                       subset_fun,
                                       attgt_fun,
+                                      extra_gt_returns,
                                       ...) {
 
   # unpack ptep
@@ -109,7 +110,8 @@ panel_empirical_bootstrap <- function(attgt.list,
   pte_emp_boot(attgt_results=attgt_results,
                overall_results=overall_results,
                group_results=group_results,
-               dyn_results=dyn_results)
+               dyn_results=dyn_results,
+               extra_gt_returns=extra_gt_returns)
 }
 
 
