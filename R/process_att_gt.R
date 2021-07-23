@@ -17,6 +17,7 @@ process_att_gt <- function(att_gt_results, ptep) {
   att <- attgt.results$att
   group <- attgt.results$group
   time.period <- attgt.results$time.period
+  extra_gt_returns <- att_gt_results$extra_gt_returns
 
   #-----------------------------------------------------------------------------
   # analytical standard errors
@@ -80,9 +81,17 @@ process_att_gt <- function(att_gt_results, ptep) {
     time.period <- sapply(time.period,
                           t2orig,
                           original_time.periods=original_time.periods)
+    extra_gt_returns <- lapply(extra_gt_returns,
+                               function(egr) {
+                                 egr$group <- t2orig(egr$group, original_time.periods)
+                                 egr$time.period <- t2orig(egr$time.period, original_time.periods)
+                                 egr
+                               })
+                               
   }
+
   # Return list for ATT(g,t)
-  return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep))
+  return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep, extra_gt_returns=extra_gt_returns))
 }
 
 #' @title mboot2

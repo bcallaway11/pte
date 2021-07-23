@@ -33,7 +33,8 @@ group_time_att <- function(group,
                            W,
                            Wpval,
                            alp,
-                           ptep) {
+                           ptep,
+                           extra_gt_returns) {
 
   out <- list(group=group,
               t=time.period,
@@ -46,7 +47,8 @@ group_time_att <- function(group,
               W=W,
               Wpval=Wpval,
               alp=alp,
-              ptep=ptep)
+              ptep=ptep,
+              extra_gt_returns=extra_gt_returns)
 
   # might eventually drop this, but add a few things to get access
   # to aggregations from did package
@@ -135,14 +137,12 @@ print.group_time_att <- function(x,...) {
 pte_results <- function(att_gt,
                         overall_att,
                         event_study,
-                        ptep,
-                        extra_gt_returns) {
+                        ptep) {
 
   out <- list(att_gt=att_gt,
               overall_att=overall_att,
               event_study=event_study,
-              ptep=ptep,
-              extra_gt_returns=extra_gt_returns)
+              ptep=ptep)
 
   class(out) <- "pte_results"
 
@@ -345,7 +345,7 @@ pte_emp_boot <- function(attgt_results,
                          overall_results,
                          group_results,
                          dyn_results,
-                         extra_gt_returns) {
+                         extra_gt_returns=NULL) {
 
   out <- list(attgt_results=attgt_results,
               overall_results=overall_results,

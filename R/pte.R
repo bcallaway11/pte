@@ -245,7 +245,8 @@ pte <- function(yname,
                                      attgt_fun,
                                      extra_gt_returns=res$extra_gt_returns,
                                      ...))
-  }  
+  }
+
   att_gt <- process_att_gt(res,ptep)
 
   #-----------------------------------------------------------------------------
@@ -268,8 +269,7 @@ pte <- function(yname,
   out <- pte_results(att_gt=att_gt,
                      overall_att=overall_att,
                      event_study=event_study,
-                     ptep=ptep,
-                     extra_gt_returns=res$extra_gt_returns)
+                     ptep=ptep)
   
   out
 }

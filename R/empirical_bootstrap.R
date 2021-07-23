@@ -19,11 +19,22 @@ panel_empirical_bootstrap <- function(attgt.list,
   # unpack ptep
   data <- ptep$data
   idname <- ptep$idname
+  boot_type <- ptep$boot_type
   biters <- ptep$biters
   cl <- ptep$cl
   
   # compute aggregations
   aggte <- attgt_pte_aggregations(attgt.list, ptep)
+
+  # kind of hack...calls and returns of emprical and multiplier bootstrap
+  # not matching exactly
+  original_time.periods <- sort(unique(data[,ptep$tname]))
+  extra_gt_returns <- lapply(extra_gt_returns,
+                             function(egr) {
+                               egr$group <- t2orig(egr$group, original_time.periods)
+                               egr$time.period <- t2orig(egr$time.period, original_time.periods)
+                               egr
+                             })
 
   # bootstrap
   # list to store bootstrap results
@@ -40,6 +51,7 @@ panel_empirical_bootstrap <- function(attgt.list,
                            idname=ptep$idname,
                            data=bdata,
                            alp=ptep$alp,
+                           boot_type=boot_type,
                            biters=ptep$biters,
                            cl=ptep$cl,
                            ...)
@@ -105,6 +117,7 @@ panel_empirical_bootstrap <- function(attgt.list,
   overall_results <- aggte$overall_results
   overall_results_se <- sd(unlist(BMisc::getListElement(boot.res, "overall_results")))
   overall_results <- tibble(att=overall_results, se=overall_results_se)
+
 
   # return all results
   pte_emp_boot(attgt_results=attgt_results,
