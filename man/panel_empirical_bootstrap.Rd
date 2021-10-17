@@ -4,7 +4,15 @@
 \alias{panel_empirical_bootstrap}
 \title{panel_empirical_bootstrap}
 \usage{
-panel_empirical_bootstrap(attgt.list, ptep, subset_fun, attgt_fun, ...)
+panel_empirical_bootstrap(
+  attgt.list,
+  ptep,
+  setup_pte_fun,
+  subset_fun,
+  attgt_fun,
+  extra_gt_returns,
+  ...
+)
 }
 \arguments{
 \item{attgt.list}{list of attgt results from \code{compute.pte}}

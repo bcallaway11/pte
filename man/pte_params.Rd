@@ -4,7 +4,20 @@
 \alias{pte_params}
 \title{pte_params}
 \usage{
-pte_params(yname, gname, tname, idname, data, glist, tlist, alp, biters, cl)
+pte_params(
+  yname,
+  gname,
+  tname,
+  idname,
+  data,
+  glist,
+  tlist,
+  cband,
+  alp,
+  boot_type,
+  biters,
+  cl
+)
 }
 \arguments{
 \item{yname}{Name of outcome in \code{data}}

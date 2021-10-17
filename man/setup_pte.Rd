@@ -2,27 +2,33 @@
 % Please edit documentation in R/pte_params.R
 \name{setup_pte}
 \alias{setup_pte}
-\title{setup_pte}
+\title{Setup panel treatment effects parameters}
 \usage{
-setup_pte(yname, gname, tname, idname, data, alp = 0.05, biters = 100, cl = 1)
+setup_pte(
+  yname,
+  gname,
+  tname,
+  idname,
+  data,
+  required_pre_periods = 1,
+  anticipation = 0,
+  cband = TRUE,
+  alp = 0.05,
+  boot_type = boot_type,
+  biters = 100,
+  cl = 1,
+  ...
+)
 }
-\arguments{
-\item{yname}{Name of outcome in \code{data}}
-
-\item{gname}{Name of group in \code{data}}
-
-\item{tname}{Name of time period in \code{data}}
-
-\item{idname}{Name of id in \code{data}}
-
-\item{data}{balanced panel data}
-
-\item{alp}{significance level; default is 0.05}
-
-\item{biters}{number of bootstrap iterations; default is 100}
-
-\item{cl}{number of clusters to be used when bootstrapping; default is 1}
+\value{
+\code{pte_params} object
 }
 \description{
-Setup panel treatment effects parameters
+This is a function for how to setup
+the data to be used in the \code{pte} package.
+
+The \code{setup_pte} function builds on \code{setup_pte_basic} and
+attempts to provide a general purpose function (with error handling)
+to arrange the data in a way that can be processed by \code{subset_fun}
+and \code{attgt_fun} in the next steps.
 }

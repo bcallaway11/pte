@@ -15,8 +15,10 @@ group_time_att(
   n,
   W,
   Wpval,
+  cband,
   alp,
-  ptep
+  ptep,
+  extra_gt_returns
 )
 }
 \arguments{

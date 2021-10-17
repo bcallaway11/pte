@@ -4,7 +4,13 @@
 \alias{pte_emp_boot}
 \title{pte_emp_boot}
 \usage{
-pte_emp_boot(attgt_results, overall_results, group_results, dyn_results)
+pte_emp_boot(
+  attgt_results,
+  overall_results,
+  group_results,
+  dyn_results,
+  extra_gt_returns = NULL
+)
 }
 \arguments{
 \item{attgt_results}{\code{data.frame} holding attgt results}

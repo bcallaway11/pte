@@ -11,9 +11,12 @@ pte(
   tname,
   idname,
   data,
+  setup_pte_fun,
   subset_fun,
   attgt_fun,
+  cband = TRUE,
   alp = 0.05,
+  boot_type = "multiplier",
   biters = 100,
   cl = 1,
   ...
@@ -29,6 +32,32 @@ pte(
 \item{idname}{Name of id in \code{data}}
 
 \item{data}{balanced panel data}
+
+\item{setup_pte_fun}{This is a function that should take in \code{data},
+\code{yname} (the name of the outcome variable in \code{data}),
+\code{gname} (the name of the group variable),
+\code{idname} (the name of the id variable),
+and possibly other arguments such as the significance level \code{alp},
+the number of bootstrap iterations \code{biters}, and how many clusters
+for parallel computing in the bootstrap \code{cl}.  The key thing that
+needs to be figured out in this function is which groups and time periods
+ATT(g,t) should be computed in.  The function should
+return a \code{pte_params} object which contains all of the parameters
+passed into the function as well as \code{glist} and \code{tlist} which
+should be ordered lists of groups and time periods for ATT(g,t) to be computed.
+
+This function provides also provides a good place for error handling related
+to the types of data that can be handled.
+
+The \code{pte} package contains the function \code{setup_pte} that is
+a lightweight function that basically just takes the data, omits
+the never-treated group from \code{glist} but includes all other groups
+and drops the first time period.  This works in cases where ATT would
+be identified in the 2x2 case (i.e., where there are two time periods,
+no units are treated in the first period and the identification strategy
+"works" with access to a treated and untreated group and untreated
+potential outcomes for both groups in the first period) --- for example,
+this approach works if DID is the identification strategy.}
 
 \item{subset_fun}{This is a function that should take in \code{data},
 \code{g} (for group), \code{tp} (for time period), and \code{...}
@@ -67,6 +96,13 @@ objects will be computed using the empirical bootstrap.  This is usually
 substantially) computationally slower.}
 
 \item{alp}{significance level; default is 0.05}
+
+\item{boot_type}{should be one of "multiplier" (the default) or "empirical".
+The multiplier bootstrap is generally much faster, but \code{attgt_fun} needs
+to provide an expression for the influence function (which could be challenging
+to figure out).  If no influence function is provided, then the \code{pte}
+package will use the empirical bootstrap no matter what the value of this
+parameter.}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 
