@@ -28,6 +28,7 @@ process_att_gt <- function(att_gt_results, ptep) {
   n <- nrow(inffunc)
   V <- Matrix::t(inffunc)%*%inffunc/n
   se <- sqrt(Matrix::diag(V)/n)
+  cband <- ptep$cband
   alp <- ptep$alp
 
   # critical value from N(0,1), for pointwise
@@ -35,6 +36,8 @@ process_att_gt <- function(att_gt_results, ptep) {
 
   # multiplier bootstrap results
   bout <- mboot2(inffunc, alp=alp)
+
+  if (cband) cval <- bout$crit_val
   
   #-----------------------------------------------------------------------------
   # compute Wald pre-test
@@ -66,6 +69,7 @@ process_att_gt <- function(att_gt_results, ptep) {
   }
 
   # convert tlist and glist to be compatible with did::aggte
+  
   # from "new" time to "original" time
   original_time.periods <- sort(unique(ptep$data[,ptep$tname]))
   if ( ! all(ptep$tlist %in% original_time.periods) ) {
@@ -90,8 +94,12 @@ process_att_gt <- function(att_gt_results, ptep) {
                                
   }
 
+  # set groups to be untreated so that we do not drop them later (would be better to have this in
+  # aggte code, but no changes there.  The only place where I know this is used is for staggered_ife
+  ptep$data[,ptep$gname] <- ifelse( !(ptep$data[,ptep$gname] %in% ptep$glist), 0, ptep$data[,ptep$gname])
+
   # Return list for ATT(g,t)
-  return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=bout$crit_val, inf_func=inffunc, n=n, W=W, Wpval=Wpval, alp = alp, ptep=ptep, extra_gt_returns=extra_gt_returns))
+  return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=cval, inf_func=inffunc, n=n, W=W, Wpval=Wpval, cband=cband, alp=alp, ptep=ptep, extra_gt_returns=extra_gt_returns))
 }
 
 #' @title mboot2

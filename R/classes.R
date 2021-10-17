@@ -32,6 +32,7 @@ group_time_att <- function(group,
                            n,
                            W,
                            Wpval,
+                           cband,
                            alp,
                            ptep,
                            extra_gt_returns) {
@@ -46,6 +47,7 @@ group_time_att <- function(group,
               n=n,
               W=W,
               Wpval=Wpval,
+              cband=cband,
               alp=alp,
               ptep=ptep,
               extra_gt_returns=extra_gt_returns)
@@ -84,8 +86,8 @@ summary.group_time_att <- function(object, ...) {
                          "Pointwise ")
   cband_text1 <- paste0("[", cband_text1a, cband_text1b)
 
-  cband_lower <- group_time_att_obj$att - group_time_att_obj$c*group_time_att_obj$se
-  cband_upper <- group_time_att_obj$att + group_time_att_obj$c*group_time_att_obj$se
+  cband_lower <- group_time_att_obj$att - group_time_att_obj$crit_val*group_time_att_obj$se
+  cband_upper <- group_time_att_obj$att + group_time_att_obj$crit_val*group_time_att_obj$se
 
   sig <- (cband_upper < 0) | (cband_lower > 0)
   sig[is.na(sig)] <- FALSE

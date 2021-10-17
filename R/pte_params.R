@@ -29,6 +29,7 @@ setup_pte_basic <- function(yname,
                             tname,
                             idname,
                             data,
+                            cband=TRUE,
                             alp=0.05,
                             boot_type="multiplier",
                             biters=100,
@@ -64,6 +65,7 @@ setup_pte_basic <- function(yname,
                        data=data,
                        glist=groups,
                        tlist=time.periods,
+                       cband=cband,
                        alp=alp,
                        boot_type=boot_type,
                        biters=biters,
@@ -95,6 +97,7 @@ setup_pte <- function(yname,
                       data,
                       required_pre_periods=1,
                       anticipation=0,
+                      cband=TRUE,
                       alp=0.05,
                       boot_type=boot_type,
                       biters=100,
@@ -161,6 +164,7 @@ setup_pte <- function(yname,
                        data=data,
                        glist=groups,
                        tlist=time.periods,
+                       cband=cband,
                        alp=alp,
                        boot_type=boot_type,
                        biters=biters,
@@ -179,7 +183,7 @@ setup_pte <- function(yname,
 #'  periods.
 #' @param original_time.periods vector containing all original time periods.
 #'
-#' @return new time period converted to original time period
+#' @return original time period converted from new time period
 #' @export
 t2orig <- function(t, original_time.periods) {
   new_time.periods <- seq(1,length(unique(original_time.periods)))
@@ -194,6 +198,9 @@ t2orig <- function(t, original_time.periods) {
 #'  exactly spaced apart by 1.
 #' 
 #' @inheritParams t2orig
+#'
+#' @return new time period converted from original time period
+#' @export
 orig2t <- function(orig, original_time.periods) {
   new_time.periods <- seq(1,length(unique(original_time.periods)))
   c(new_time.periods,0)[which(unique(c(original_time.periods,0))==orig)]
@@ -224,6 +231,7 @@ pte_params <- function(yname,
                        data,
                        glist,
                        tlist,
+                       cband,
                        alp,
                        boot_type,
                        biters,
@@ -236,6 +244,7 @@ pte_params <- function(yname,
               data=data,
               glist=glist,
               tlist=tlist,
+              cband=cband,
               alp=alp,
               boot_type=boot_type,
               biters=biters,

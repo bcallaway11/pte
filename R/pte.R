@@ -211,6 +211,7 @@ pte <- function(yname,
                 setup_pte_fun,
                 subset_fun,
                 attgt_fun,
+                cband=TRUE,
                 alp=0.05,
                 boot_type = "multiplier",
                 biters=100,
@@ -223,6 +224,7 @@ pte <- function(yname,
                         tname=tname,
                         idname=idname,
                         data=data,
+                        cband=cband,
                         alp=alp,
                         boot_type=boot_type,
                         biters=biters,
@@ -254,7 +256,7 @@ pte <- function(yname,
   #-----------------------------------------------------------------------------
 
   # overall
-  overall_att <- did::aggte(att_gt, type="group", bstrap=TRUE, cband=TRUE)
+  overall_att <- did::aggte(att_gt, type="group", bstrap=TRUE, cband=cband, alp=ptep$alp)
 
   # event study
   # ... for max_e and min_e
@@ -263,7 +265,7 @@ pte <- function(yname,
   max_e <- ifelse(is.null(dots$max_e), Inf, dots$max_e)
   balance_e <- dots$balance_e
   
-  event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=TRUE, min_e=min_e, max_e=max_e, balance_e=balance_e)
+  event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=cband, alp=ptep$alp, min_e=min_e, max_e=max_e, balance_e=balance_e)
 
   # output
   out <- pte_results(att_gt=att_gt,
