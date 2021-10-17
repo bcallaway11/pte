@@ -184,6 +184,7 @@ setup_pte <- function(yname,
 #' @param original_time.periods vector containing all original time periods.
 #'
 #' @return original time period converted from new time period
+#' 
 #' @export
 t2orig <- function(t, original_time.periods) {
   new_time.periods <- seq(1,length(unique(original_time.periods)))
@@ -200,6 +201,7 @@ t2orig <- function(t, original_time.periods) {
 #' @inheritParams t2orig
 #'
 #' @return new time period converted from original time period
+#' 
 #' @export
 orig2t <- function(orig, original_time.periods) {
   new_time.periods <- seq(1,length(unique(original_time.periods)))
