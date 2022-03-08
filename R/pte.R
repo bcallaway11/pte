@@ -28,17 +28,7 @@ compute.pte <- function(ptep,
   G <- data[,gname]
   id <- data[,idname]
   period <- data[,tname]
-  # G <- data$G
-  # id <- data$id
-  # period <- data$period
-  # original_groups <- sort(unique(data$original_group))[-1] # drops never treated
-  # original_time.periods <- sort(unique(data$original_period))
-  
-  #data$G <- G
-  #data$id <- id
   n <- length(unique(data$id))
-  #data$period <- period
-  #data$Y <- data[,yname]
 
   # pick up all time periods
   time.periods <- ptep$tlist
@@ -62,6 +52,128 @@ compute.pte <- function(ptep,
         
     # loop over all time periods
     for (tp in time.periods) {
+      
+      #-----------------------------------------------------------------------------
+      # code to get the right subset of the data
+      #-----------------------------------------------------------------------------
+      gt_subset <- subset_fun(data, g, tp, ... )
+      gt_data <- gt_subset$gt_data
+      n1 <- gt_subset$n1
+      disidx <- gt_subset$disidx
+
+      #-----------------------------------------------------------------------------
+      # code to estimate attgt using correct relevant data
+      #-----------------------------------------------------------------------------
+      attgt <- attgt_fun(gt_data=gt_data, ...)
+
+      #-----------------------------------------------------------------------------
+      # If this is too generic...
+      # an alternative idea is to just delete the call to attgt_fun above
+      # and just write your own code in this spot
+      #-----------------------------------------------------------------------------
+
+      #-----------------------------------------------------------------------------
+      # process attgt results
+      #   - branch based on whether or not attgt_fun returned an influence
+      #     function
+      #-----------------------------------------------------------------------------
+
+      # save results
+      attgt.list[[counter]] <- list(att=attgt$attgt,
+                                    group=g,
+                                    time.period=tp)
+
+      extra_gt_returns[[counter]] <- list(extra_gt_returns=attgt$extra_gt_returns,
+                                          group=g,
+                                          time.period=tp)
+
+
+      # code if influence function is available
+      if ( !is.null(attgt$inf_func) ) {
+        # adjust for relative sizes of overall data
+        # and groups used for this attgt
+        attgt$inf_func <- (n/n1)*attgt$inf_func
+
+        this.inf_func <- rep(0,n)
+        this.inf_func[disidx] <- attgt$inf_func
+        inffunc[,counter] <- this.inf_func
+      }
+
+      #cat("counter: ", counter, "\n")
+      counter <- counter+1
+      #----------------------------------------------------
+
+    }
+  }
+
+  return(list(attgt.list=attgt.list, inffunc=inffunc, extra_gt_returns=extra_gt_returns))
+
+}
+
+#' @title compute.pte2
+#'
+#' @description Function that actually computes panel treatment effects.
+#'   The difference relative to \code{compute.pte} is that this function
+#'   loops over time periods first (instead of groups) and tries to
+#'   estimate model for untreated potential outcomes jointly for all groups.
+#'
+#' @inheritParams pte
+#' @param ptep \code{pte_params} object
+#'
+#' @return list of attgt results and, sometimes, an influence function
+#'
+#' @export
+compute.pte2 <- function(ptep,
+                        subset_fun,
+                        attgt_fun,
+                        global_model=FALSE,
+                        ...) {
+  #-----------------------------------------------------------------------------
+  # unpack ptep
+  #-----------------------------------------------------------------------------
+  data <- ptep$data
+  yname <- ptep$yname
+  gname <- ptep$gname
+  idname <- ptep$idname
+  tname <- ptep$tname
+  
+  
+  data <- as.data.frame(data)
+  
+  # setup data
+  G <- data[,gname]
+  id <- data[,idname]
+  period <- data[,tname]
+  n <- length(unique(data$id))
+  
+  # pick up all time periods
+  time.periods <- ptep$tlist
+
+  # sort the groups and drop the untreated group
+  groups <- ptep$glist
+
+  # list to store all group-time average treatment effects
+  # that we calculate
+  attgt.list <- list()
+  counter <- 1
+  nG <- length(groups)
+  nT <- length(time.periods)
+  inffunc <- matrix(data=NA, nrow=n, ncol=nG*(nT))
+
+  # list to hold extra results from gt-specific calculations
+  extra_gt_returns <- list()
+
+  if (global_model) {
+    data$y0 <- attgt_fun(data, ptep, ...) 
+  }
+  
+  # loop over all time periods
+  for (tp in time.periods) {
+
+    
+
+    # loop over all groups
+    for (g in groups) {
       
       #-----------------------------------------------------------------------------
       # code to get the right subset of the data

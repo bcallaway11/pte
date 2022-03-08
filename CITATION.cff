@@ -1,0 +1,177 @@
+# -----------------------------------------------------------
+# CITATION file created with {cffr} R package, v0.2.1
+# See also: https://docs.ropensci.org/cffr/
+# -----------------------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "pte" in publications use:'
+type: software
+license: GPL-3.0-only
+title: 'pte: Panel Treatment Effects'
+version: 0.0.0.9000
+abstract: This is fairly generic code for estimating treatment effects with panel
+  data. This is useful code in my own work and will perhaps be useful to others. It
+  builds heavily on the \codedid package. In particular, it breaks into separate steps
+  organizing the data, looping over groups and time periods, computing group-time
+  average treatment effects, and aggregating group-time average treatment effects.
+  Often, one is able to implement a new identification/estimation procedure by simply
+  replacing the step on estimating group-time average treatment effects. See several
+  different examples of this approach in the README.
+authors:
+- family-names: Callaway
+  given-names: Brantly
+  email: brantly.callaway@uga.edu
+preferred-citation:
+  type: manual
+  title: 'pte: Panel Treatment Effects'
+  authors:
+  - family-names: Callaway
+    given-names: Brantly
+    email: brantly.callaway@uga.edu
+  version: 0.0.0.9000
+  abstract: This is fairly generic code for estimating treatment effects with panel
+    data. This is useful code in my own work and will perhaps be useful to others.
+    It builds heavily on the \codedid package. In particular, it breaks into separate
+    steps organizing the data, looping over groups and time periods, computing group-time
+    average treatment effects, and aggregating group-time average treatment effects.
+    Often, one is able to implement a new identification/estimation procedure by simply
+    replacing the step on estimating group-time average treatment effects. See several
+    different examples of this approach in the README.
+  contact:
+  - family-names: Callaway
+    given-names: Brantly
+    email: brantly.callaway@uga.edu
+  license: GPL-3.0-only
+  year: '2022'
+contact:
+- family-names: Callaway
+  given-names: Brantly
+  email: brantly.callaway@uga.edu
+references:
+- type: software
+  title: BMisc
+  abstract: 'BMisc: Miscellaneous Functions for Panel Data, Quantiles, and Printing
+    Results'
+  notes: Imports
+  authors:
+  - family-names: Callaway
+    given-names: Brantly
+    email: brantly.callaway@uga.edu
+  year: '2022'
+  url: https://CRAN.R-project.org/package=BMisc
+  version: '>= 1.4.1'
+- type: software
+  title: Matrix
+  abstract: 'Matrix: Sparse and Dense Matrix Classes and Methods'
+  notes: Imports
+  authors:
+  - family-names: Bates
+    given-names: Douglas
+  - family-names: Maechler
+    given-names: Martin
+    email: mmaechler+Matrix@gmail.com
+    orcid: https://orcid.org/0000-0002-8685-9910
+  year: '2022'
+  url: https://CRAN.R-project.org/package=Matrix
+- type: software
+  title: did
+  abstract: 'did: Treatment Effects with Multiple Periods and Groups'
+  notes: Imports
+  authors:
+  - family-names: Callaway
+    given-names: Brantly
+    email: brantly.callaway@uga.edu
+  - family-names: Sant'Anna
+    given-names: Pedro H. C.
+    email: pedro.h.santanna@vanderbilt.edu
+  year: '2022'
+  version: '>= 2.0.0'
+- type: software
+  title: ggplot2
+  abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
+  notes: Imports
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Chang
+    given-names: Winston
+    orcid: https://orcid.org/0000-0002-1576-2126
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@rstudio.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Takahashi
+    given-names: Kohske
+  - family-names: Wilke
+    given-names: Claus
+    orcid: https://orcid.org/0000-0002-7470-9261
+  - family-names: Woo
+    given-names: Kara
+    orcid: https://orcid.org/0000-0002-5125-4188
+  - family-names: Yutani
+    given-names: Hiroaki
+    orcid: https://orcid.org/0000-0002-3385-7233
+  - family-names: Dunnington
+    given-names: Dewey
+    orcid: https://orcid.org/0000-0002-9415-4582
+  year: '2022'
+  url: https://CRAN.R-project.org/package=ggplot2
+- type: software
+  title: DRDID
+  abstract: 'DRDID: Doubly Robust Difference-in-Differences Estimators'
+  notes: Imports
+  authors:
+  - family-names: Sant'Anna
+    given-names: Pedro H. C.
+    email: pedro.h.santanna@vanderbilt.edu
+  - family-names: Zhao
+    given-names: Jun
+    email: jun.zhao@vanderbilt.edu
+  year: '2022'
+  url: https://CRAN.R-project.org/package=DRDID
+- type: software
+  title: tidyr
+  abstract: 'tidyr: Tidy Messy Data'
+  notes: Imports
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  - family-names: Girlich
+    given-names: Maximilian
+  year: '2022'
+  url: https://CRAN.R-project.org/package=tidyr
+- type: software
+  title: dplyr
+  abstract: 'dplyr: A Grammar of Data Manipulation'
+  notes: Imports
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: François
+    given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Müller
+    given-names: Kirill
+    orcid: https://orcid.org/0000-0002-1416-3412
+  year: '2022'
+  url: https://CRAN.R-project.org/package=dplyr
+- type: software
+  title: pbapply
+  abstract: 'pbapply: Adding Progress Bar to ''*apply'' Functions'
+  notes: Imports
+  authors:
+  - family-names: Solymos
+    given-names: Peter
+  - family-names: Zawadzki
+    given-names: Zygmunt
+  year: '2022'
+  url: https://CRAN.R-project.org/package=pbapply
