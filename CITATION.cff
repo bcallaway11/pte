@@ -37,12 +37,16 @@ preferred-citation:
     Often, one is able to implement a new identification/estimation procedure by simply
     replacing the step on estimating group-time average treatment effects. See several
     different examples of this approach in the README.
+  repository-code: https://github.com/bcallaway11/pte
+  url: https://github.com/bcallaway11/pte
   contact:
   - family-names: Callaway
     given-names: Brantly
     email: brantly.callaway@uga.edu
   license: GPL-3.0-only
   year: '2022'
+repository-code: https://github.com/bcallaway11/pte
+url: https://github.com/bcallaway11/pte
 contact:
 - family-names: Callaway
   given-names: Brantly
@@ -85,6 +89,7 @@ references:
     given-names: Pedro H. C.
     email: pedro.h.santanna@vanderbilt.edu
   year: '2022'
+  url: https://CRAN.R-project.org/package=did
   version: '>= 2.0.0'
 - type: software
   title: ggplot2
