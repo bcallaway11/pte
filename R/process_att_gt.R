@@ -97,6 +97,7 @@ process_att_gt <- function(att_gt_results, ptep) {
   # set groups to be untreated so that we do not drop them later (would be better to have this in
   # aggte code, but no changes there.  The only place where I know this is used is for staggered_ife
   ptep$data[,ptep$gname] <- ifelse( !(ptep$data[,ptep$gname] %in% ptep$glist), 0, ptep$data[,ptep$gname])
+  ptep$data$.w <- 1
 
   # Return list for ATT(g,t)
   return(group_time_att(group=group, time.period=time.period, att=att, V_analytical=V, se=bout$boot_se, crit_val=cval, inf_func=inffunc, n=n, W=W, Wpval=Wpval, cband=cband, alp=alp, ptep=ptep, extra_gt_returns=extra_gt_returns))
