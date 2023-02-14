@@ -300,6 +300,13 @@ compute.pte2 <- function(ptep,
 #'  to figure out).  If no influence function is provided, then the \code{pte}
 #'  package will use the empirical bootstrap no matter what the value of this
 #'  parameter.
+#' @param gt_type is the type of result that is computed for each group and
+#'  time period.  The default choice is "att" is this is (by far) the most
+#'  common choice.  The other option is "dtt", which stands for distribution
+#'  treatment effect on the treated.  In this case, the attgt_fun should
+#'  return a vector of counterfactual outcomes for each unit in the data, from
+#'  which a counterfactual distribution can be computed.  Additional arguments
+#'  will often need to be provided in this case.
 #'
 #' @param ... extra arguments that can be passed to create the correct subsets
 #'  of the data (depending on \code{subset_fun}), to estimate group time
@@ -320,7 +327,9 @@ pte <- function(yname,
                 attgt_fun,
                 cband=TRUE,
                 alp=0.05,
-                boot_type = "multiplier",
+                boot_type="multiplier",
+                gt_type="att",
+                ret_quantile=NULL,
                 biters=100,
                 cl=1,
                 ...) {
@@ -334,6 +343,8 @@ pte <- function(yname,
                         cband=cband,
                         alp=alp,
                         boot_type=boot_type,
+                        gt_type=gt_type,
+                        ret_quantile=ret_quantile,
                         biters=biters,
                         cl=cl,
                         ...)
@@ -347,6 +358,7 @@ pte <- function(yname,
   # if yes, go to alternate code for empirical
   # bootstrap
   if (all(is.na(res$inffunc)) | ptep$boot_type=="empirical")  {
+    
     return(panel_empirical_bootstrap(res$attgt.list,
                                      ptep,
                                      setup_pte_fun,
@@ -476,7 +488,8 @@ pte2 <- function(yname,
                 attgt_fun,
                 cband=TRUE,
                 alp=0.05,
-                boot_type = "multiplier",
+                boot_type="multiplier",
+                gt_type="att", 
                 biters=100,
                 cl=1,
                 ...) {
@@ -490,6 +503,7 @@ pte2 <- function(yname,
                         cband=cband,
                         alp=alp,
                         boot_type=boot_type,
+                        gt_type=gt_type,
                         biters=biters,
                         cl=cl,
                         ...)
@@ -503,6 +517,11 @@ pte2 <- function(yname,
   # if yes, go to alternate code for empirical
   # bootstrap
   if (all(is.na(res$inffunc)) | ptep$boot_type=="empirical")  {
+
+    if (gt_type == "dtt") {
+      res <- process_dtt_gt(res,ptep)
+    }
+    
     return(panel_empirical_bootstrap(res$attgt.list,
                                      ptep,
                                      setup_pte_fun,

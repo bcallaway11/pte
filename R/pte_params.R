@@ -32,6 +32,8 @@ setup_pte_basic <- function(yname,
                             cband=TRUE,
                             alp=0.05,
                             boot_type="multiplier",
+                            gt_type="att",
+                            ret_quantile=0.5,
                             biters=100,
                             cl=1,
                             ...) {
@@ -68,6 +70,8 @@ setup_pte_basic <- function(yname,
                        cband=cband,
                        alp=alp,
                        boot_type=boot_type,
+                       gt_type=gt_type,
+                       ret_quantile=ret_quantile,
                        biters=biters,
                        cl=cl)
 
@@ -99,7 +103,9 @@ setup_pte <- function(yname,
                       anticipation=0,
                       cband=TRUE,
                       alp=0.05,
-                      boot_type=boot_type,
+                      boot_type="multiplier",
+                      gt_type="att",
+                      ret_quantile=0.5,
                       biters=100,
                       cl=1,
                       ...) {
@@ -167,6 +173,8 @@ setup_pte <- function(yname,
                        cband=cband,
                        alp=alp,
                        boot_type=boot_type,
+                       gt_type=gt_type,
+                       ret_quantile=ret_quantile,
                        biters=biters,
                        cl=cl)
 
@@ -222,6 +230,9 @@ orig2t <- function(orig, original_time.periods) {
 #' @param tlist list of time periods to create group-time average treatment
 #'  effects for
 #' @param alp significance level; default is 0.05
+#' @param boot_type which type of bootstrap to use
+#' @param gt_type which type of group-time effects are computed.
+#'  For backward compatiblity, the default choice is "att"
 #' @param biters number of bootstrap iterations; default is 100
 #' @param cl number of clusters to be used when bootstrapping; default is 1
 #'
@@ -236,6 +247,8 @@ pte_params <- function(yname,
                        cband,
                        alp,
                        boot_type,
+                       gt_type="att",
+                       ret_quantile=0.5,
                        biters,
                        cl) {
 
@@ -249,6 +262,8 @@ pte_params <- function(yname,
               cband=cband,
               alp=alp,
               boot_type=boot_type,
+              gt_type=gt_type,
+              ret_quantile=ret_quantile,
               biters=biters,
               cl=cl)
 

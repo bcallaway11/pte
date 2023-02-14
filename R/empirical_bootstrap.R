@@ -22,9 +22,21 @@ panel_empirical_bootstrap <- function(attgt.list,
   boot_type <- ptep$boot_type
   biters <- ptep$biters
   cl <- ptep$cl
+  gt_type <- ptep$gt_type
+  ret_quantile <- ptep$ret_quantile
   
+  #-----------------------------------------------------------------------------
   # compute aggregations
-  aggte <- attgt_pte_aggregations(attgt.list, ptep)
+  #-----------------------------------------------------------------------------
+
+  # all results that return QTTs will go through empirical bootstrap code
+  if (gt_type == "qtt") {
+    aggte <- qtt_pte_aggregations(attgt.list, ptep, extra_gt_returns)
+  } else if (gt_type == "qott") {
+    aggte <- qott_pte_aggregations(attgt.list, ptep, extra_gt_returns)
+  } else {
+    aggte <- attgt_pte_aggregations(attgt.list, ptep)
+  }
 
   # kind of hack...calls and returns of emprical and multiplier bootstrap
   # not matching exactly
@@ -52,6 +64,8 @@ panel_empirical_bootstrap <- function(attgt.list,
                            data=bdata,
                            alp=ptep$alp,
                            boot_type=boot_type,
+                           gt_type=gt_type,
+                           ret_quantile=ret_quantile,
                            biters=ptep$biters,
                            cl=ptep$cl,
                            ...)
@@ -60,12 +74,19 @@ panel_empirical_bootstrap <- function(attgt.list,
 
     # call our function for estimating attgt on the
     # bootstrapped data
-    bres_attgt <- compute.pte(ptep=bptep,
-                              subset_fun=subset_fun,
-                              attgt_fun=attgt_fun,
-                              ...)$attgt.list
+    bres_gt <- compute.pte(ptep=bptep,
+                        subset_fun=subset_fun,
+                        attgt_fun=attgt_fun,
+                        ...)[c("attgt.list", "extra_gt_returns")] # don't need to carry around ptep
+
+    if (gt_type == "qtt") {
+      bres <- qtt_pte_aggregations(bres_gt$attgt.list, bptep, bres_gt$extra_gt_returns)
+    } else if (gt_type == "qott") {
+      bres <- qott_pte_aggregations(bres_gt$attgt.list, bptep, bres_gt$extra_gt_returns)
+    } else {
+      bres <- attgt_pte_aggregations(bres_gt$attgt.list, bptep)
+    }
     
-    bres <- attgt_pte_aggregations(bres_attgt, bptep)
     bres
   }, cl=cl)
 
@@ -132,7 +153,8 @@ panel_empirical_bootstrap <- function(attgt.list,
 #'
 #' @description Aggregate group-time average treatment effects into
 #'  overall, group, and dynamic effects.  This function is only used
-#'  for computing standard errors using the empirical bootstrap.
+#'  for (i) computing standard errors using the empirical bootstrap,
+#'  and (ii) combining distributions at the (g,t) level
 #'
 #' @inheritParams panel_empirical_bootstrap
 #'
@@ -191,6 +213,7 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
 
   # calculate average effects by event time
   att.e <- c()
+  weights.e <- list()
   counter <- 1
   for (this.e in eseq) {
     # get subset of results at this event time
@@ -198,6 +221,10 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
 
     # calculate weights by group size
     res.e$weight <- res.e$n.group / sum(res.e$n.group)
+    weights.e[[counter]] <- list()
+    weights.e[[counter]]$e <- this.e
+    weights.e[[counter]]$weights <- rep(0, nrow(attgt.results)) # start w/ all 0 weights
+    weights.e[[counter]]$weights[attgt.results$e==this.e] <- res.e$weight # fill in some weights
 
     # calculate dynamic effect as weighted average
     att.e[counter] <- sum(res.e$att * res.e$weight)
@@ -207,14 +234,21 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
   }
 
   # calculate average effects by group
-  att.g <- data.frame(group=integer(), att.g=double(), n.group=integer())
+  att.g <- data.frame(group=integer(), att.g=double(), n.group=integer(), group_post_length=integer())
+  weights.g <- list()
   counter <- 1
   for (this.g in groups) {
     # get subset of results at this event time
     res.g <- subset(attgt.results, group==this.g & time.period >= group)
+
+    # calculate (g,t) weights
+    weights.g[[counter]] <- list()
+    weights.g[[counter]]$g <- this.g
+    weights.g[[counter]]$weights <- rep(0, nrow(attgt.results)) # start w/ all 0 weights
+    weights.g[[counter]]$weights[attgt.results$group==this.g & attgt.results$time.period>=attgt.results$group] <- 1/nrow(res.g) # fill in weights
     
-    # calculate dynamic effect as weighted average
-    att.g[counter,] <- c(this.g, mean(res.g$att), mean(res.g$n.group))
+    # calculate group effect as weighted average
+    att.g[counter,] <- c(this.g, mean(res.g$att), mean(res.g$n.group), group_post_length=nrow(res.g))
 
     # on to the next one
     counter <- counter+1
@@ -227,6 +261,12 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
   # weighted average across groups to get overall att
   att.overall <- sum(att.g$att.g * (att.g$n.group/sum(att.g$n.group)))
 
+  # att_gt weights
+  # don't interpret this, this is just to put the weights back on ATT(g,t)
+  att.g$g.overall.w <- ( att.g$n.group / sum(att.g$n.group)) / att.g$group_post_length
+  weights.overall <- dplyr::left_join(attgt.results, att.g[,c("group", "g.overall.w")], by="group")$g.overall.w * 
+                                                                                                  (attgt.results$e >= 0)
+  
   group.results <- att.g[,c(1,2)] # drop group sizes
 
   # store dynamic effects results
@@ -235,6 +275,129 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
   # return pte_emp_boot object
   pte_emp_boot(attgt_results=attgt.results[,c("group","att","time.period")],
                dyn_results=dyn.results,
+               dyn_weights=weights.e,
                group_results=group.results,
-               overall_results=att.overall)
+               group_weights=weights.g,
+               overall_results=att.overall,
+               overall_weights=weights.overall
+               )
+}
+
+
+#' @title qtt_pte_aggregations
+#'
+#' @description Aggregate group-time distributions into qtt versions of
+#'  overall, group, and dynamic effects. 
+#'
+#' @inheritParams attgt_pte_aggregations
+#'
+#' @return \code{pte_emp_boot} object
+#'
+#' @export
+qtt_pte_aggregations <- function(attgt.list, ptep, extra_gt_returns) {
+
+  ret_quantile <- ptep$ret_quantile
+  
+  # compute results for att_gt, but we are actually just interested in getting
+  # the weights here.
+  attgt_res <- attgt_pte_aggregations(attgt.list, ptep=ptep)
+  F0_gt <- lapply(extra_gt_returns, function(egr) egr$extra_gt_returns$F0)
+  F1_gt <- lapply(extra_gt_returns, function(egr) egr$extra_gt_returns$F1)
+  qtt_gt <- unlist(lapply(1:length(F0_gt), function(j) {
+    quantile(F1_gt[[j]], probs=ret_quantile, type=1) - quantile(F0_gt[[j]], probs=ret_quantile, type=1)
+  }))
+  groups <- unlist(BMisc::getListElement(attgt.list, "group"))
+  time.periods <- unlist(BMisc::getListElement(attgt.list, "time.period"))
+  yname <- ptep$yname
+  y.seq <- quantile(ptep$data[,yname], probs=seq(0,1,length.out=1000))
+  
+  F0_overall <- BMisc::combineDfs(y.seq=y.seq,
+                                  dflist=F0_gt,
+                                  pstrat=attgt_res$overall_weights)
+  F1_overall <- BMisc::combineDfs(y.seq=y.seq,
+                                  dflist=F1_gt,
+                                  pstrat=attgt_res$overall_weights)
+  overall_qtt <- quantile(F1_overall, probs=ret_quantile, type=1) - quantile(F0_overall, probs=ret_quantile, type=1)
+
+  dyn_qtt <- lapply(attgt_res$dyn_weights, function(dw) {
+    F0_e <- BMisc::combineDfs(y.seq=y.seq,
+                              dflist=F0_gt,
+                              pstrat=dw$weights)
+    F1_e <- BMisc::combineDfs(y.seq=y.seq,
+                              dflist=F1_gt,
+                              pstrat=dw$weights)
+    list(e=dw$e, att.e=quantile(F1_e, probs=ret_quantile, type=1) - quantile(F0_e, probs=ret_quantile, type=1))
+  })
+
+  group_qtt <- lapply(attgt_res$group_weights, function(gw) {
+    F0_g <- BMisc::combineDfs(y.seq=y.seq,
+                              dflist=F0_gt,
+                              pstrat=gw$weights)
+    F1_g <- BMisc::combineDfs(y.seq=y.seq,
+                              dflist=F1_gt,
+                              pstrat=gw$weights)
+    list(group=gw$g, att.g=quantile(F1_g, probs=ret_quantile, type=1) - quantile(F0_g, probs=ret_quantile, type=1))
+  })
+
+  pte_emp_boot(attgt_results=data.frame(group=groups,
+                                        time.period=time.periods,
+                                        att=qtt_gt),
+               dyn_results=do.call(rbind.data.frame, dyn_qtt),
+               group_results=do.call(rbind.data.frame, group_qtt),
+               overall_results=overall_qtt)
+}
+
+
+
+#' @title qott_pte_aggregations
+#'
+#' @description Aggregate group-time distribution of the treatment effect into
+#'  overall, group, and dynamic effects. 
+#'
+#' @inheritParams attgt_pte_aggregations
+#'
+#' @return \code{pte_emp_boot} object
+#'
+#' @export
+qott_pte_aggregations <- function(attgt.list, ptep, extra_gt_returns) {
+
+  ret_quantile <- ptep$ret_quantile
+  
+  # compute results for att_gt, but we are actually just interested in getting
+  # the weights here.
+  attgt_res <- attgt_pte_aggregations(attgt.list, ptep=ptep)
+  Fte_gt <- lapply(extra_gt_returns, function(egr) egr$extra_gt_returns$Fte)
+  qott_gt <- unlist(lapply(1:length(Fte_gt), function(j) {
+    quantile(Fte_gt[[j]], probs=ret_quantile, type=1) 
+  }))
+  groups <- unlist(BMisc::getListElement(attgt.list, "group"))
+  time.periods <- unlist(BMisc::getListElement(attgt.list, "time.period"))
+  yname <- ptep$yname
+  y.seq <- seq(-max(ptep$data[,yname]), max(ptep$data[,yname]), length.out=1000)
+  
+  Fte_overall <- BMisc::combineDfs(y.seq=y.seq,
+                                  dflist=Fte_gt,
+                                  pstrat=attgt_res$overall_weights)
+  overall_qott <- quantile(Fte_overall, probs=ret_quantile, type=1)
+
+  dyn_qott <- lapply(attgt_res$dyn_weights, function(dw) {
+    Fte_e <- BMisc::combineDfs(y.seq=y.seq,
+                               dflist=Fte_gt,
+                               pstrat=dw$weights)
+    list(e=dw$e, att.e=quantile(Fte_e, probs=ret_quantile, type=1))
+  })
+
+  group_qott <- lapply(attgt_res$group_weights, function(gw) {
+    Fte_g <- BMisc::combineDfs(y.seq=y.seq,
+                               dflist=Fte_gt,
+                               pstrat=gw$weights)
+    list(group=gw$g, att.g=quantile(Fte_g, probs=ret_quantile, type=1))
+  })
+
+  pte_emp_boot(attgt_results=data.frame(group=groups,
+                                        time.period=time.periods,
+                                        att=qott_gt),
+               dyn_results=do.call(rbind.data.frame, dyn_qott),
+               group_results=do.call(rbind.data.frame, group_qott),
+               overall_results=overall_qott)
 }

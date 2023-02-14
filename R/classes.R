@@ -299,7 +299,7 @@ attgt_if <- function(attgt, inf_func, extra_gt_returns=NULL) {
 #' @export
 attgt_noif <- function(attgt, extra_gt_returns=NULL) {
 
-  out <- list(attgt=attgt$ATT, extra_gt_returns=extra_gt_returns)
+  out <- list(attgt=attgt, extra_gt_returns=extra_gt_returns)
   class(out) <- "attgt_noif"
   out
 }
@@ -339,6 +339,11 @@ gt_data_frame <- function(data) {
 #' @param overall_results \code{data.frame} holding overall results
 #' @param group_results \code{data.frame} holding group results
 #' @param dyn_results \code{data.frame} holding dynamic results
+#' @param overall_weights vector containing weights on underlying ATT(g,t)
+#'  for overall treatment effect parameter
+#' @param dyn_weights list containing weights on underlying ATT(g,t)
+#'  for each value of \code{e} corresponding to the dynamic treatment
+#'  effect parameters.
 #'
 #' @return pte_emp_boot object
 #'
@@ -347,12 +352,18 @@ pte_emp_boot <- function(attgt_results,
                          overall_results,
                          group_results,
                          dyn_results,
+                         overall_weights=NULL,
+                         dyn_weights=NULL,
+                         group_weights=NULL,
                          extra_gt_returns=NULL) {
 
   out <- list(attgt_results=attgt_results,
               overall_results=overall_results,
               group_results=group_results,
               dyn_results=dyn_results,
+              overall_weights=overall_weights,
+              dyn_weights=dyn_weights,
+              group_weights=group_weights,
               extra_gt_returns=extra_gt_returns)
 
   class(out) <- "pte_emp_boot"
