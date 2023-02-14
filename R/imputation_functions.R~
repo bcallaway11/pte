@@ -1,5 +1,0 @@
-twfe_imputation <- function(data, ptep) {
-
-  browser()
-  formla <- BMisc::toformula(ptep$yname, 0)
-  fixest::felm(
