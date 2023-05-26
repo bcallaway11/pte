@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.2.1
+# CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -21,30 +21,6 @@ authors:
 - family-names: Callaway
   given-names: Brantly
   email: brantly.callaway@uga.edu
-preferred-citation:
-  type: manual
-  title: 'pte: Panel Treatment Effects'
-  authors:
-  - family-names: Callaway
-    given-names: Brantly
-    email: brantly.callaway@uga.edu
-  version: 0.0.0.9000
-  abstract: This is fairly generic code for estimating treatment effects with panel
-    data. This is useful code in my own work and will perhaps be useful to others.
-    It builds heavily on the \codedid package. In particular, it breaks into separate
-    steps organizing the data, looping over groups and time periods, computing group-time
-    average treatment effects, and aggregating group-time average treatment effects.
-    Often, one is able to implement a new identification/estimation procedure by simply
-    replacing the step on estimating group-time average treatment effects. See several
-    different examples of this approach in the README.
-  repository-code: https://github.com/bcallaway11/pte
-  url: https://github.com/bcallaway11/pte
-  contact:
-  - family-names: Callaway
-    given-names: Brantly
-    email: brantly.callaway@uga.edu
-  license: GPL-3.0-only
-  year: '2022'
 repository-code: https://github.com/bcallaway11/pte
 url: https://github.com/bcallaway11/pte
 contact:
@@ -57,17 +33,20 @@ references:
   abstract: 'BMisc: Miscellaneous Functions for Panel Data, Quantiles, and Printing
     Results'
   notes: Imports
+  url: https://bcallaway11.github.io/BMisc/
+  repository: https://CRAN.R-project.org/package=BMisc
   authors:
   - family-names: Callaway
     given-names: Brantly
     email: brantly.callaway@uga.edu
-  year: '2022'
-  url: https://CRAN.R-project.org/package=BMisc
+  year: '2023'
   version: '>= 1.4.1'
 - type: software
   title: Matrix
   abstract: 'Matrix: Sparse and Dense Matrix Classes and Methods'
   notes: Imports
+  url: https://R-forge.R-project.org/tracker/?atid=294&group_id=61
+  repository: https://CRAN.R-project.org/package=Matrix
   authors:
   - family-names: Bates
     given-names: Douglas
@@ -75,12 +54,16 @@ references:
     given-names: Martin
     email: mmaechler+Matrix@gmail.com
     orcid: https://orcid.org/0000-0002-8685-9910
-  year: '2022'
-  url: https://CRAN.R-project.org/package=Matrix
+  - family-names: Jagan
+    given-names: Mikael
+    orcid: https://orcid.org/0000-0002-3542-2938
+  year: '2023'
 - type: software
   title: did
   abstract: 'did: Treatment Effects with Multiple Periods and Groups'
   notes: Imports
+  url: https://bcallaway11.github.io/did/
+  repository: https://CRAN.R-project.org/package=did
   authors:
   - family-names: Callaway
     given-names: Brantly
@@ -88,17 +71,18 @@ references:
   - family-names: Sant'Anna
     given-names: Pedro H. C.
     email: pedro.h.santanna@vanderbilt.edu
-  year: '2022'
-  url: https://CRAN.R-project.org/package=did
+  year: '2023'
   version: '>= 2.0.0'
 - type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
   notes: Imports
+  url: https://ggplot2.tidyverse.org
+  repository: https://CRAN.R-project.org/package=ggplot2
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: Chang
     given-names: Winston
@@ -107,7 +91,7 @@ references:
     given-names: Lionel
   - family-names: Pedersen
     given-names: Thomas Lin
-    email: thomas.pedersen@rstudio.com
+    email: thomas.pedersen@posit.co
     orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Takahashi
     given-names: Kohske
@@ -123,41 +107,47 @@ references:
   - family-names: Dunnington
     given-names: Dewey
     orcid: https://orcid.org/0000-0002-9415-4582
-  year: '2022'
-  url: https://CRAN.R-project.org/package=ggplot2
+  year: '2023'
 - type: software
   title: DRDID
   abstract: 'DRDID: Doubly Robust Difference-in-Differences Estimators'
   notes: Imports
+  url: https://psantanna.com/DRDID/
+  repository: https://CRAN.R-project.org/package=DRDID
   authors:
   - family-names: Sant'Anna
     given-names: Pedro H. C.
-    email: pedro.h.santanna@vanderbilt.edu
+    email: pedrosantanna@causal-solutions.com
   - family-names: Zhao
     given-names: Jun
-    email: jun.zhao@vanderbilt.edu
-  year: '2022'
-  url: https://CRAN.R-project.org/package=DRDID
+    email: beanzhaojun11@gmail.com
+  year: '2023'
 - type: software
   title: tidyr
   abstract: 'tidyr: Tidy Messy Data'
   notes: Imports
+  url: https://tidyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=tidyr
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
   - family-names: Girlich
     given-names: Maximilian
-  year: '2022'
-  url: https://CRAN.R-project.org/package=tidyr
+  year: '2023'
 - type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
   notes: Imports
+  url: https://dplyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=dplyr
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: François
     given-names: Romain
@@ -167,16 +157,23 @@ references:
   - family-names: Müller
     given-names: Kirill
     orcid: https://orcid.org/0000-0002-1416-3412
-  year: '2022'
-  url: https://CRAN.R-project.org/package=dplyr
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+    orcid: https://orcid.org/0000-0003-4777-038X
+  year: '2023'
 - type: software
   title: pbapply
   abstract: 'pbapply: Adding Progress Bar to ''*apply'' Functions'
   notes: Imports
+  url: https://github.com/psolymos/pbapply
+  repository: https://CRAN.R-project.org/package=pbapply
   authors:
   - family-names: Solymos
     given-names: Peter
+    email: psolymos@gmail.com
+    orcid: https://orcid.org/0000-0001-7337-1740
   - family-names: Zawadzki
     given-names: Zygmunt
-  year: '2022'
-  url: https://CRAN.R-project.org/package=pbapply
+    email: zygmunt@zstat.pl
+  year: '2023'
