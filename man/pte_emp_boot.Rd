@@ -9,6 +9,9 @@ pte_emp_boot(
   overall_results,
   group_results,
   dyn_results,
+  overall_weights = NULL,
+  dyn_weights = NULL,
+  group_weights = NULL,
   extra_gt_returns = NULL
 )
 }
@@ -20,6 +23,13 @@ pte_emp_boot(
 \item{group_results}{\code{data.frame} holding group results}
 
 \item{dyn_results}{\code{data.frame} holding dynamic results}
+
+\item{overall_weights}{vector containing weights on underlying ATT(g,t)
+for overall treatment effect parameter}
+
+\item{dyn_weights}{list containing weights on underlying ATT(g,t)
+for each value of \code{e} corresponding to the dynamic treatment
+effect parameters.}
 }
 \value{
 pte_emp_boot object

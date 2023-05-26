@@ -15,6 +15,8 @@ pte_params(
   cband,
   alp,
   boot_type,
+  gt_type = "att",
+  ret_quantile = 0.5,
   biters,
   cl
 )
@@ -37,6 +39,11 @@ for}
 effects for}
 
 \item{alp}{significance level; default is 0.05}
+
+\item{boot_type}{which type of bootstrap to use}
+
+\item{gt_type}{which type of group-time effects are computed.
+For backward compatiblity, the default choice is "att"}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 

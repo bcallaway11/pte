@@ -1,3 +1,5 @@
+# in progress...not sure if we'll actually use this
+#' @keywords internal
 twfe_imputation <- function(data, ptep) {
 
   browser()

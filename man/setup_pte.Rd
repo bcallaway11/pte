@@ -14,7 +14,9 @@ setup_pte(
   anticipation = 0,
   cband = TRUE,
   alp = 0.05,
-  boot_type = boot_type,
+  boot_type = "multiplier",
+  gt_type = "att",
+  ret_quantile = 0.5,
   biters = 100,
   cl = 1,
   ...

@@ -294,7 +294,7 @@ attgt_if <- function(attgt, inf_func, extra_gt_returns=NULL) {
 #'
 #' @inheritParams attgt_if
 #'
-#' @return attgt_if object
+#' @return attgt_noif object
 #'
 #' @export
 attgt_noif <- function(attgt, extra_gt_returns=NULL) {

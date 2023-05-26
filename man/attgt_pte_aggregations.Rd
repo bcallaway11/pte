@@ -17,5 +17,6 @@ attgt_pte_aggregations(attgt.list, ptep)
 \description{
 Aggregate group-time average treatment effects into
 overall, group, and dynamic effects.  This function is only used
-for computing standard errors using the empirical bootstrap.
+for (i) computing standard errors using the empirical bootstrap,
+and (ii) combining distributions at the (g,t) level
 }

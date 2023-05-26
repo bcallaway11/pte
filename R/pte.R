@@ -557,3 +557,56 @@ pte2 <- function(yname,
   
   out
 }
+
+#' @title pte_default
+#'
+#' @description This is a generic/example wrapper for a call to the `pte` function.
+#'
+#' This function provides access to difference-in-differences and unconfoundedness
+#' based identification/estimation strategies given (i) panel data and (ii)
+#' staggered treatment adoption
+#'
+#' @inheritParams pte_attgt
+#' @inheritParams pte
+#'
+#' @return `pte_results` object
+#' @export
+pte_default <- function(yname,
+                        gname,
+                        tname,
+                        idname,
+                        data,
+                        xformla=~1,
+                        d_outcome=FALSE,
+                        d_covs_formula=~-1,
+                        lagged_outcome_cov=FALSE,
+                        est_method="dr",
+                        anticipation=0,
+                        cband=TRUE,
+                        alp=0.05,
+                        boot_type="multiplier",
+                        biters=100,
+                        cl=1) {
+
+  res <- pte(yname=yname,
+             gname=gname,
+             tname=tname,
+             idname=idname,
+             data=data,
+             setup_pte_fun=setup_pte_basic,
+             subset_fun=two_by_two_subset,
+             attgt_fun=pte_attgt,
+             xformla=xformla,
+             d_outcome=d_outcome,
+             d_covs_formula=d_covs_formula,
+             lagged_outcome_cov=lagged_outcome_cov,
+             est_method=est_method,
+             anticipation=anticipation,
+             cband=cband,
+             alp=alp,
+             boot_type=boot_type,
+             biters=biters,
+             cl=cl)
+
+  res
+}

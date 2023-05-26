@@ -13,6 +13,8 @@ setup_pte_basic(
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",
+  gt_type = "att",
+  ret_quantile = 0.5,
   biters = 100,
   cl = 1,
   ...
@@ -30,6 +32,11 @@ setup_pte_basic(
 \item{data}{balanced panel data}
 
 \item{alp}{significance level; default is 0.05}
+
+\item{boot_type}{which type of bootstrap to use}
+
+\item{gt_type}{which type of group-time effects are computed.
+For backward compatiblity, the default choice is "att"}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 
