@@ -18,22 +18,32 @@
 #'  subset.
 #'
 #' @export
-two_by_two_subset <- function(data, g, tp, control_group="notyettreated", ...) {
+two_by_two_subset <- function(data, 
+                              g, 
+                              tp, 
+                              control_group="notyettreated", 
+                              anticipation=0,
+                              base_period="varying",
+                              ...) {
   
   # get the correct "base" period for this group
-  # (subtract 2 to avoid anticipation)
-  main.base.period <- g - 1
+  main.base.period <- g - anticipation - 1
 
   #----------------------------------------------------
-  # if it's a pre-treatment time period (used for the
-  # pre-test, we need to adjust the base period)
+  if (base_period == "varying") {
+    # if it's a pre-treatment time period (used for the
+    # pre-test, we need to adjust the base period)
 
-  # group not treated yet
-  if (tp < g) {
-    # move two periods before
-    base.period <- tp - 1
+    # group not treated yet
+    if (tp < (g-anticipation)) {
+      # move to earlier period
+      # not going to include anticipation here
+      base.period <- tp - 1
+    } else {
+      # this is a post-treatment period
+      base.period <- main.base.period
+    }
   } else {
-    # this is a post-treatment period
     base.period <- main.base.period
   }
   #----------------------------------------------------
@@ -66,4 +76,85 @@ two_by_two_subset <- function(data, g, tp, control_group="notyettreated", ...) {
   disidx <- unique(data$id) %in% unique(this.data$id)
 
   list(gt_data=this.data, n1=n1, disidx=disidx)
+}
+
+
+#' @title keep_all_untreated_subset
+#' 
+#' @description A function that takes an original data set and keeps all 
+#' pre-treatment data for all groups.  For group g, it also includes data 
+#' for the current period.  
+#' 
+#' Also, note that if `tp` is still a pre-treatment period for group g, 
+#' then periods after `tp` will also be dropped for group g.  This is a 
+#' design choice and is useful especially for estimating placebo 
+#' group-time average treatment effects in pre-treatment periods.
+#' 
+#' A main use case for this function is to compute ATT(g,t)'s using a global
+#' estimation strategy such as imputation in Gardner (2022).  
+#'
+#' @param data a data frame
+#' @param g group
+#' @param tp time period
+#'
+#' @return all data but in correct format for computing ATT(g,t)
+keep_all_untreated_subset <- function(data, g, tp, ...) {
+  # drop post-treatment observations that are not in group g
+  # this creates the same sort of unbalanced panel data set 
+  # used in imputation papers.
+  data$.treat <- 1*((data$G <= data$period) & (data$G != 0))
+  this.data <- subset(data, (.treat==0) | (G==g))
+  
+  # This line drops any periods after the "current" period too (even
+  # if these are untreated) for group g.
+  # This is to deal with pre-treatment periods 
+  # where it seems ambiguous/confusing what exactly to do and rules
+  # out that later periods will be used to estimate the model for untreated 
+  # potential outcomes using group g.
+  this.data <- subset(this.data, !(G==g & period > tp)) 
+  
+  this.data$D <- 1*((this.data$G==g) & this.data$period >= tp) 
+  n1 <- length(unique(this.data$id))
+  disidx <- unique(data$id) %in% unique(this.data$id) 
+  list(gt_data = this.data, n1 = n1, disidx = disidx)
+}
+
+
+#' @title keep_all_pretreatment
+#' 
+#' @description A function that takes an original data set and keeps all 
+#' data for all groups that are not-yet-treated by period `tp` as well 
+#' as for group `g`.  
+#' 
+#' In particular, this keeps more data than functions like `two_by_two` 
+#' subset that use a fixed base period.
+#' 
+#' A main use case for this function is the interactive fixed effects approach 
+#' proposed in Callaway and Tsyawo (2023).  
+#'
+#' @param data a data frame
+#' @param g group
+#' @param tp time period
+#'
+#' @return all data but in correct format for computing ATT(g,t)
+keep_all_pretreatment <- function(data, g, tp, ...) {
+  this.data <- subset(data, period <= tp)
+  # drop post-treatment observations that are not in group g
+  # this creates the same sort of unbalanced panel data set 
+  # used in imputation papers.
+  data$.treat <- 1*((data$G <= data$period) & (data$G != 0))
+  this.data <- subset(data, (.treat==0) | (G==g))
+  
+  # This line drops any periods after the "current" period too (even
+  # if these are untreated) for group g.
+  # This is to deal with pre-treatment periods 
+  # where it seems ambiguous/confusing what exactly to do and rules
+  # out that later periods will be used to estimate the model for untreated 
+  # potential outcomes using group g.
+  this.data <- subset(this.data, !(G==g & period > tp)) 
+  
+  this.data$D <- 1*((this.data$G==g) & this.data$period >= tp) 
+  n1 <- length(unique(this.data$id))
+  disidx <- unique(data$id) %in% unique(this.data$id) 
+  list(gt_data = this.data, n1 = n1, disidx = disidx)
 }

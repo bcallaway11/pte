@@ -101,6 +101,7 @@ setup_pte <- function(yname,
                       data,
                       required_pre_periods=1,
                       anticipation=0,
+                      base_period="varying",
                       cband=TRUE,
                       alp=0.05,
                       boot_type="multiplier",
@@ -152,16 +153,27 @@ setup_pte <- function(yname,
                    orig2t,
                    original_time.periods=original_time.periods)
 
+  t_adjust <- 0
   # sort the time periods and drop the first
   # \code{required_pre_periods} time periods
   # these are the ones we loop over below
-  time.periods <- sort(time.periods)[-seq(1,required_pre_periods)]
-  groups <- groups[groups %in% time.periods]
-  # account for anticipation
-  groups <- groups[ groups >= (min(time.periods)+anticipation) ]
-
-  # drop early treated groups
-  data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
+  if (base_period == "universal") {
+    time.periods <- sort(time.periods)
+    groups <- groups[groups %in% time.periods[-1]]
+    # account for anticipation
+    groups <- groups[ groups >= (min(time.periods+1)+anticipation) ]
+    # drop early treated groups
+    data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
+  } else {
+    time.periods <- sort(time.periods)[-seq(1,required_pre_periods)]
+    groups <- groups[groups %in% time.periods]
+    # account for anticipation
+    groups <- groups[ groups >= (min(time.periods)+anticipation) ]
+    # drop early treated groups
+    data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
+  }
+  
+  
 
   params <- pte_params(yname=yname,
                        gname=gname,
@@ -173,6 +185,8 @@ setup_pte <- function(yname,
                        cband=cband,
                        alp=alp,
                        boot_type=boot_type,
+                       anticipation=anticipation,
+                       base_period=base_period,
                        gt_type=gt_type,
                        ret_quantile=ret_quantile,
                        biters=biters,
@@ -247,6 +261,8 @@ pte_params <- function(yname,
                        cband,
                        alp,
                        boot_type,
+                       anticipation=NULL,
+                       base_period=NULL,
                        gt_type="att",
                        ret_quantile=0.5,
                        biters,
@@ -262,6 +278,8 @@ pte_params <- function(yname,
               cband=cband,
               alp=alp,
               boot_type=boot_type,
+              anticipation=anticipation,
+              base_period=base_period,
               gt_type=gt_type,
               ret_quantile=ret_quantile,
               biters=biters,

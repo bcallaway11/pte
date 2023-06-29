@@ -11,6 +11,16 @@ process_att_gt <- function(att_gt_results, ptep) {
   # extract ATT(g,t) and influence functions
   attgt.list <- att_gt_results$attgt.list
   inffunc <- att_gt_results$inffunc
+  
+  # a bit of a hack way to get standard errors 
+  # with a universal base period when some ATT(g,t)'s
+  # are 0 by construction and have no s.e.'s / inf. func.
+  # if (isTRUE(ptep$base_period == "universal")) {
+  #  set0cols <- sapply(1:ncol(inffunc), function(i) {
+  #    (all(is.na(inffunc[,i])))
+  #  })
+  #  inffunc[,set0cols] <- 0
+  #}
 
   # process results
   attgt.results <- do.call("rbind.data.frame", attgt.list)
@@ -130,10 +140,16 @@ mboot2 <- function(inffunc, biters=1000, alp=.05) {
                                  quantile(b, .25, type=1, na.rm = T))/(qnorm(.75) - qnorm(.25))) / sqrt(n)
 
   # bootstrap t-stat (i.e., sup-t)
-  bT <- apply(bres, 1, function(b) max( abs(b/boot_se)) ) / sqrt(n)
+  bT <- apply(bres, 1, function(b) max( abs(b/boot_se), na.rm=TRUE)) / sqrt(n)
 
   # new critical value for uniform confidence bands
   crit_val <- quantile(bT, 1-alp, type=1, na.rm = T)
+  if (crit_val < qnorm(1-alp/2)) {
+    warning("critical value for uniform confidence band is somehow smaller than 
+            critical value for pointwise confidence interval...using pointwise 
+            confidence interal")
+    crit_val <- cval <- qnorm(1-alp/2)
+  }
 
   return(list(boot_se=boot_se, crit_val=crit_val))
 }

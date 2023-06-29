@@ -20,7 +20,8 @@ compute.pte <- function(ptep,
   gname <- ptep$gname
   idname <- ptep$idname
   tname <- ptep$tname
-  
+  base_period <- ptep$base_period
+  anticipation <- ptep$anticipation
   
   data <- as.data.frame(data)
   
@@ -53,6 +54,19 @@ compute.pte <- function(ptep,
     # loop over all time periods
     for (tp in time.periods) {
       
+      if (isTRUE(base_period == "universal")) {
+        if (tp == (g-1-anticipation)) {
+          attgt.list[[counter]] <- list(att=0,
+                                        group=g,
+                                        time.period=tp)
+        
+          extra_gt_returns[[counter]] <- list(extra_gt_returns=NULL,
+                                              group=g,
+                                              time.period=tp)      
+          counter <- counter + 1
+          next
+        }
+      }
       #-----------------------------------------------------------------------------
       # code to get the right subset of the data
       #-----------------------------------------------------------------------------
@@ -293,7 +307,7 @@ compute.pte2 <- function(ptep,
 #'  objects will be computed using the empirical bootstrap.  This is usually
 #'  (perhaps substantially) easier to code, but also will usually be (perhaps
 #'  substantially) computationally slower.
-#'
+#'  
 #' @param boot_type should be one of "multiplier" (the default) or "empirical".
 #'  The multiplier bootstrap is generally much faster, but \code{attgt_fun} needs
 #'  to provide an expression for the influence function (which could be challenging
@@ -328,10 +342,10 @@ pte <- function(yname,
                 cband=TRUE,
                 alp=0.05,
                 boot_type="multiplier",
-                gt_type="att",
-                ret_quantile=NULL,
                 biters=100,
                 cl=1,
+                gt_type="att",
+                ret_quantile=NULL,
                 ...) {
 
 
@@ -582,6 +596,7 @@ pte_default <- function(yname,
                         lagged_outcome_cov=FALSE,
                         est_method="dr",
                         anticipation=0,
+                        base_period="universal",
                         cband=TRUE,
                         alp=0.05,
                         boot_type="multiplier",
@@ -593,7 +608,7 @@ pte_default <- function(yname,
              tname=tname,
              idname=idname,
              data=data,
-             setup_pte_fun=setup_pte_basic,
+             setup_pte_fun=setup_pte,
              subset_fun=two_by_two_subset,
              attgt_fun=pte_attgt,
              xformla=xformla,
@@ -602,6 +617,7 @@ pte_default <- function(yname,
              lagged_outcome_cov=lagged_outcome_cov,
              est_method=est_method,
              anticipation=anticipation,
+             base_period=base_period,
              cband=cband,
              alp=alp,
              boot_type=boot_type,
