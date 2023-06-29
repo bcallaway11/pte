@@ -98,6 +98,8 @@ two_by_two_subset <- function(data,
 #' @param tp time period
 #'
 #' @return all data but in correct format for computing ATT(g,t)
+#' 
+#' @export
 keep_all_untreated_subset <- function(data, g, tp, ...) {
   # drop post-treatment observations that are not in group g
   # this creates the same sort of unbalanced panel data set 
@@ -137,6 +139,8 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
 #' @param tp time period
 #'
 #' @return all data but in correct format for computing ATT(g,t)
+#' 
+#' @export
 keep_all_pretreatment_subset <- function(data, g, tp, ...) {
   this.data <- subset(data, period <= tp)
   # keep group g, not-yet-treated groups, and never-treated group
