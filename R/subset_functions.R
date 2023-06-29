@@ -120,7 +120,7 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
 }
 
 
-#' @title keep_all_pretreatment
+#' @title keep_all_pretreatment_subset
 #' 
 #' @description A function that takes an original data set and keeps all 
 #' data for all groups that are not-yet-treated by period `tp` as well 
@@ -137,21 +137,10 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
 #' @param tp time period
 #'
 #' @return all data but in correct format for computing ATT(g,t)
-keep_all_pretreatment <- function(data, g, tp, ...) {
+keep_all_pretreatment_subset <- function(data, g, tp, ...) {
   this.data <- subset(data, period <= tp)
-  # drop post-treatment observations that are not in group g
-  # this creates the same sort of unbalanced panel data set 
-  # used in imputation papers.
-  data$.treat <- 1*((data$G <= data$period) & (data$G != 0))
-  this.data <- subset(data, (.treat==0) | (G==g))
-  
-  # This line drops any periods after the "current" period too (even
-  # if these are untreated) for group g.
-  # This is to deal with pre-treatment periods 
-  # where it seems ambiguous/confusing what exactly to do and rules
-  # out that later periods will be used to estimate the model for untreated 
-  # potential outcomes using group g.
-  this.data <- subset(this.data, !(G==g & period > tp)) 
+  # keep group g, not-yet-treated groups, and never-treated group
+  this.data <- subset(data, (G==g) | (G > tp) | (G==0))
   
   this.data$D <- 1*((this.data$G==g) & this.data$period >= tp) 
   n1 <- length(unique(this.data$id))
