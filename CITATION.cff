@@ -50,6 +50,7 @@ references:
   authors:
   - family-names: Bates
     given-names: Douglas
+    orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Maechler
     given-names: Martin
     email: mmaechler+Matrix@gmail.com
