@@ -15,6 +15,8 @@ pte_params(
   cband,
   alp,
   boot_type,
+  anticipation = NULL,
+  base_period = NULL,
   gt_type = "att",
   ret_quantile = 0.5,
   biters,

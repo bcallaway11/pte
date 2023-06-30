@@ -17,10 +17,10 @@ pte(
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",
-  gt_type = "att",
-  ret_quantile = NULL,
   biters = 100,
   cl = 1,
+  gt_type = "att",
+  ret_quantile = NULL,
   ...
 )
 }
@@ -106,6 +106,10 @@ to figure out).  If no influence function is provided, then the \code{pte}
 package will use the empirical bootstrap no matter what the value of this
 parameter.}
 
+\item{biters}{number of bootstrap iterations; default is 100}
+
+\item{cl}{number of clusters to be used when bootstrapping; default is 1}
+
 \item{gt_type}{is the type of result that is computed for each group and
 time period.  The default choice is "att" is this is (by far) the most
 common choice.  The other option is "dtt", which stands for distribution
@@ -113,10 +117,6 @@ treatment effect on the treated.  In this case, the attgt_fun should
 return a vector of counterfactual outcomes for each unit in the data, from
 which a counterfactual distribution can be computed.  Additional arguments
 will often need to be provided in this case.}
-
-\item{biters}{number of bootstrap iterations; default is 100}
-
-\item{cl}{number of clusters to be used when bootstrapping; default is 1}
 
 \item{...}{extra arguments that can be passed to create the correct subsets
 of the data (depending on \code{subset_fun}), to estimate group time

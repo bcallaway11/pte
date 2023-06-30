@@ -12,6 +12,7 @@ setup_pte(
   data,
   required_pre_periods = 1,
   anticipation = 0,
+  base_period = "varying",
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",

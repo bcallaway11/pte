@@ -4,7 +4,15 @@
 \alias{two_by_two_subset}
 \title{two_by_two_subset}
 \usage{
-two_by_two_subset(data, g, tp, control_group = "notyettreated", ...)
+two_by_two_subset(
+  data,
+  g,
+  tp,
+  control_group = "notyettreated",
+  anticipation = 0,
+  base_period = "varying",
+  ...
+)
 }
 \arguments{
 \item{data}{the full dataset}

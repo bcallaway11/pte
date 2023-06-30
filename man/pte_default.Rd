@@ -16,6 +16,7 @@ pte_default(
   lagged_outcome_cov = FALSE,
   est_method = "dr",
   anticipation = 0,
+  base_period = "universal",
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",
