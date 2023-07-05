@@ -120,7 +120,8 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
   
   this.data$D <- 1*((this.data$G==g) & this.data$period >= tp) 
   n1 <- length(unique(this.data$id))
-  disidx <- unique(data$id) %in% unique(this.data$id) 
+  disidx <- unique(data$id) %in% unique(this.data$id)
+  
   list(gt_data = this.data, n1 = n1, disidx = disidx)
 }
 
@@ -147,13 +148,14 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
 keep_all_pretreatment_subset <- function(data, g, tp, ...) {
   this.data <- subset(data, period <= tp)
   # keep group g, not-yet-treated groups, and never-treated group
-  this.data <- subset(data, (G==g) | (G > tp) | (G==0))
+  this.data <- subset(this.data, (G==g) | (G > tp) | (G==0))
   
   # variable to keep track of pre/post periods
   this.data$name <- ifelse(this.data$period==tp, "post", "pre")
   
   this.data$D <- 1*((this.data$G==g) & this.data$period >= tp) 
   n1 <- length(unique(this.data$id))
-  disidx <- unique(data$id) %in% unique(this.data$id) 
+  disidx <- unique(data$id) %in% unique(this.data$id)
+  
   list(gt_data = this.data, n1 = n1, disidx = disidx)
 }

@@ -521,7 +521,7 @@ pte2 <- function(yname,
                         biters=biters,
                         cl=cl,
                         ...)
-  
+
   res <- compute.pte2(ptep=ptep,
                      subset_fun=subset_fun,
                      attgt_fun=attgt_fun,
