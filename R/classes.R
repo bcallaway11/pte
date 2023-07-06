@@ -123,7 +123,8 @@ summary.group_time_att <- function(object, ...) {
 #' @export
 print.group_time_att <- function(x,...) {
   #summary.group_time_att(x,...)
-  print(x,...)
+  NextMethod(x)
+  invisible(x)
 }
 
 
@@ -228,7 +229,8 @@ summary.pte_results <- function(object, ...) {
 #' @export
 print.pte_results <- function(x,...) {
   #summary.pte_results(x,...)
-  print(x,...)
+  NextMethod(x)
+  invisible(x)
 }
 
 
