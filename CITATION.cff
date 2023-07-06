@@ -178,3 +178,15 @@ references:
     given-names: Zygmunt
     email: zygmunt@zstat.pl
   year: '2023'
+- type: software
+  title: testthat
+  abstract: 'testthat: Unit Testing for R'
+  notes: Suggests
+  url: https://testthat.r-lib.org
+  repository: https://CRAN.R-project.org/package=testthat
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2023'
+  version: '>= 3.0.0'
