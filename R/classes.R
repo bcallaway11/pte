@@ -122,9 +122,7 @@ summary.group_time_att <- function(object, ...) {
 #'
 #' @export
 print.group_time_att <- function(x,...) {
-  #summary.group_time_att(x,...)
-  NextMethod(x)
-  invisible(x)
+  summary.group_time_att(x,...)
 }
 
 
