@@ -17,6 +17,7 @@ pte_params(
   boot_type,
   anticipation = NULL,
   base_period = NULL,
+  control_group = "notyettreated",
   gt_type = "att",
   ret_quantile = 0.5,
   biters,
@@ -43,6 +44,14 @@ effects for}
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{which type of bootstrap to use}
+
+\item{anticipation}{how many periods before the treatment actually takes
+place that it can have an effect on outcomes}
+
+\item{control_group}{Which group is used as the comparison group.  For
+backwards compatibility, the default choice is "notyettreated", but
+different estimation strategies can implement their own choices
+for the control group}
 
 \item{gt_type}{which type of group-time effects are computed.
 For backward compatiblity, the default choice is "att"}

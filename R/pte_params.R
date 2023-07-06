@@ -245,6 +245,12 @@ orig2t <- function(orig, original_time.periods) {
 #'  effects for
 #' @param alp significance level; default is 0.05
 #' @param boot_type which type of bootstrap to use
+#' @param anticipation how many periods before the treatment actually takes 
+#'  place that it can have an effect on outcomes
+#' @param control_group Which group is used as the comparison group.  For 
+#'  backwards compatibility, the default choice is "notyettreated", but 
+#'  different estimation strategies can implement their own choices 
+#'  for the control group
 #' @param gt_type which type of group-time effects are computed.
 #'  For backward compatiblity, the default choice is "att"
 #' @param biters number of bootstrap iterations; default is 100
@@ -263,6 +269,7 @@ pte_params <- function(yname,
                        boot_type,
                        anticipation=NULL,
                        base_period=NULL,
+                       control_group="notyettreated",
                        gt_type="att",
                        ret_quantile=0.5,
                        biters,
@@ -279,6 +286,7 @@ pte_params <- function(yname,
               alp=alp,
               boot_type=boot_type,
               anticipation=anticipation,
+              control_group=control_group,
               base_period=base_period,
               gt_type=gt_type,
               ret_quantile=ret_quantile,

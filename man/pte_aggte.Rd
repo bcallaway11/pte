@@ -2,21 +2,11 @@
 % Please edit documentation in R/pte_aggte.R
 \name{pte_aggte}
 \alias{pte_aggte}
-\title{pte_aggte
-
-This is a slight edit of the aggte function from the \code{did} package.
-Currently, it only provides aggregations for "overall" treatment effects
-and event studies.  It also will provide the weights directly which is
-currently used for constructing aggregations based on distributions.
-The other difference is that, \code{pte_aggte} provides inference results
-where the only randomness is coming from the outcomes (not from the group
-assignment nor from the covariates).}
+\title{pte_aggte}
 \usage{
 pte_aggte(attgt, type = "overall")
 }
 \description{
-pte_aggte
-
 This is a slight edit of the aggte function from the \code{did} package.
 Currently, it only provides aggregations for "overall" treatment effects
 and event studies.  It also will provide the weights directly which is
