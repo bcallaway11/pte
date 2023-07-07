@@ -19,7 +19,7 @@ load("~/Dropbox/ppe/data/covid_data.rda")
 library(ggplot2)
 library(dplyr)
 ```
-# Panel Treatment Effects (pte) Package
+# Panel Treatment Effects (pte) Package <img src="man/figures/logo.png" align="right" alt="pte" width="155" />
 
 The `pte` package compartmentalizes the steps needed to implement estimators of group-time average treatment effects (and their aggregations) in order to make it easier to apply the same sorts of arguments outside of their "birthplace" in the literature on difference-in-differences.
 

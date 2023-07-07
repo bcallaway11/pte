@@ -35,3 +35,24 @@ test_that("did basics", {
   cs_dyn <- did::aggte(cs_res, type="dynamic")$att.egt[dyn_idx]
   expect_equal(res$event_study$att.egt[dyn_idx], cs_dyn)
 c})
+
+test_that("empirical bootstrap", {
+  sp <- did::reset.sim()
+  data <- did::build_sim_dataset(sp)
+  
+  res <- pte(yname="Y",
+             gname="G",
+             tname="period",
+             idname="id",
+             data=data,
+             setup_pte_fun=setup_pte,
+             subset_fun=two_by_two_subset,
+             attgt_fun=did_attgt,
+             xformla=~X,
+             boot_type="empirical",
+             biters=10) # just checking that this runs
+  
+  expect_equal(res$overall_att$overall.att, 1)
+  message("this is failing because the names are not correct on the returns 
+          for the empirical bootstrap case")
+})
