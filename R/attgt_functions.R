@@ -109,7 +109,7 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   if (ncol(dX) > 0) colnames(dX) <- paste0("d", colnames(dX))
 
   # lagged outcome
-  if (lagged_outcome_cov) lagY_formula <- -1 + Y else lagY_formula <- ~ -1
+  if (lagged_outcome_cov) lagY_formula <- ~ -1 + Y else lagY_formula <- ~ -1
   lagY <- model.frame(lagY_formula, data=subset(gt_data, name=="post"))
   
 
