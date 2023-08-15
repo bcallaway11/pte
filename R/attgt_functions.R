@@ -109,8 +109,8 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   if (ncol(dX) > 0) colnames(dX) <- paste0("d", colnames(dX))
 
   # lagged outcome
-  if (lagged_outcome_cov) lagY_formula <- ~ -1 + Y else lagY_formula <- ~ -1
-  lagY <- model.frame(lagY_formula, data=subset(gt_data, name=="post"))
+  #if (lagged_outcome_cov) lagY_formula <- ~ -1 + Y else lagY_formula <- ~ -1
+  #lagY <- model.frame(lagY_formula, data=subset(gt_data, name=="pre"))
   
 
   # convert two period panel into one period
@@ -119,7 +119,7 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
                                            values_from=c(Y))
 
   # merge outcome and covariate data
-  gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre, dX, lagY)
+  gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre, dX)
 
   # treatment dummy variable
   D <- gt_dataX$D
@@ -135,6 +135,7 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   # to be equal to 0 for all units
   gt_dataX <- droplevels(gt_dataX)
   use_formula <- BMisc::toformula("", c(BMisc::rhs.vars(xformla), colnames(dX)))
+  if (lagged_outcome_cov) use_formula <- BMisc::addCovToFormla("pre", use_formula)
   covmat <- model.matrix(use_formula, data=gt_dataX)
   covmat2 <- covmat[D==0,]
   #www <- gt_dataX[D==0,]$.w

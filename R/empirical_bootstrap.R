@@ -65,7 +65,7 @@ panel_empirical_bootstrap <- function(attgt.list,
                            alp=ptep$alp,
                            boot_type=boot_type,
                            gt_type=gt_type,
-                           ret_quantile=ret_quantile,
+                           #ret_quantile=ret_quantile,
                            biters=ptep$biters,
                            cl=ptep$cl,
                            ...)
