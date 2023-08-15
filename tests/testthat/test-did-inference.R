@@ -5,9 +5,13 @@
 library(did)
 library(pbapply)
 
-cl <- as.numeric(readline("how many clusters would like to use for the inference tests?  "))
+
+skip_inf <- menu(c("run", "skip"), title="would you like to run or skip the inference tests?")
+skip_inf <- skip_inf == 2
 
 test_that("tests for inference", {
+  skip_if(skip_inf)
+  cl <- as.numeric(readline("how many clusters would like to use for the inference tests?  "))
   mc_sims <- 100
   rejs <- pblapply(1:mc_sims, function(mc) {
     sp <- did::reset.sim()
