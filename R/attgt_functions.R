@@ -138,7 +138,7 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   if (lagged_outcome_cov) use_formula <- BMisc::addCovToFormla("pre", use_formula)
   covmat <- model.matrix(use_formula, data=gt_dataX)
   covmat2 <- covmat[D==0,]
-  #www <- gt_dataX[D==0,]$.w
+  # www <- gt_dataX[D==0,]$.w
   n_unt <- sum(1-D)
   precheck_reg <- qr(t(covmat2)%*%covmat2/n_unt)
   keep_covs <- precheck_reg$pivot[1:precheck_reg$rank]
@@ -155,9 +155,25 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
                                 D=D,
                                 covariates=covmat,      
                                 inffunc=TRUE)
+  } else if (est_method == "grf") {
+    browser()
+    tau.forest <- causal_forest(X=covmat, Y=Y, W=D)
+    
+    # check out the causal_forest code
+    predict(tau.forest)$predictions[D==1]
+    
+    average_treatment_effect(tau.forest, method="AIPW", target.sample = "treated")
+    
+    # Add confidence intervals for heterogeneous treatment effects; growing more trees is now recommended.
+    tau.forest <- causal_forest(X, Y, W, num.trees = 4000)
+    tau.hat <- predict(tau.forest, X.test, estimate.variance = TRUE)
+    sigma.hat <- sqrt(tau.hat$variance.estimates)
   } else {
     stop(paste0("est_method: ", est_method, " is not supported"))
   }
   # return attgt
   pte::attgt_if(attgt=attgt$ATT, inf_func=attgt$att.inf.func)
 }
+
+
+
