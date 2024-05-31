@@ -16,6 +16,7 @@ setup_pte(
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",
+  weightsname = NULL,
   gt_type = "att",
   ret_quantile = 0.5,
   biters = 100,

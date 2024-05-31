@@ -2,6 +2,7 @@
 % Please edit documentation in R/imports.R, R/pte.R
 \docType{package}
 \name{pte}
+\alias{pte-package}
 \alias{pte}
 \title{Panel Treatment Effects}
 \usage{
@@ -17,6 +18,7 @@ pte(
   cband = TRUE,
   alp = 0.05,
   boot_type = "multiplier",
+  weightsname = NULL,
   biters = 100,
   cl = 1,
   gt_type = "att",
@@ -131,4 +133,15 @@ aggregating treatment effects (particularly useful are \code{min_e},
 Tools for estimating treatment effects with panel data
 
 Main function for computing panel treatment effects
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/bcallaway11/pte}
+}
+
+}
+\author{
+\strong{Maintainer}: Brantly Callaway \email{brantly.callaway@uga.edu}
+
 }

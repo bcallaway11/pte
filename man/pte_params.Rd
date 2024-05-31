@@ -17,6 +17,7 @@ pte_params(
   boot_type,
   anticipation = NULL,
   base_period = NULL,
+  weightsname = NULL,
   control_group = "notyettreated",
   gt_type = "att",
   ret_quantile = 0.5,
