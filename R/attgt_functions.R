@@ -97,15 +97,19 @@ did_attgt <- function(gt_data, xformla, ...) {
 #' @export
 pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lagged_outcome_cov=FALSE, est_method="dr", ...) {
 
+  this.g <- subset(gt_data, name=="post" & D==1)$G
+  this.tp <- unique(subset(gt_data, name=="post")$period)
+  
   #-----------------------------------------------------------------------------
   # handle covariates
   #-----------------------------------------------------------------------------
   
   # pre-treatment covariates
-  Xpre <- model.frame(xformla, data=subset(gt_data,name=="pre"))
+  Xpre <- model.frame(xformla, data=subset(gt_data, name=="pre"))
+  .w <- subset(gt_data, name=="pre")$.w
 
   # change in covariates
-  dX <- model.frame(d_covs_formula, data=subset(gt_data,name=="post")) - model.frame(d_covs_formula, data=subset(gt_data,name=="pre"))
+  dX <- model.frame(d_covs_formula, data=subset(gt_data, name=="post")) - model.frame(d_covs_formula, data=subset(gt_data,name=="pre"))
   if (ncol(dX) > 0) colnames(dX) <- paste0("d", colnames(dX))
 
   # lagged outcome
@@ -119,7 +123,7 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
                                            values_from=c(Y))
 
   # merge outcome and covariate data
-  gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre, dX)
+  gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre, dX, .w)
 
   # treatment dummy variable
   D <- gt_dataX$D
@@ -143,31 +147,60 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   precheck_reg <- qr(t(covmat2)%*%covmat2/n_unt)
   keep_covs <- precheck_reg$pivot[1:precheck_reg$rank]
   covmat <- covmat[,keep_covs]
+  
+  # if group is too small, switch to reg adjustment
+  if (est_method=="dr") {
+    pscore_est <- glm(D ~ covmat, family=binomial(link="logit"), weights=(.w/sum(.w)))
+    pscore <-predict(pscore_est, type="response")
+    if (max(pscore) > 0.99) {
+      est_method <- "reg"
+      warning(paste0("Switching to regression adjustment because of small group size for group ", 
+                     this.g, " in time period ", this.tp))
+    }
+  }
+  
   if (est_method == "dr") {
     attgt <- DRDID::drdid_panel(y1=Y,
                                 y0=rep(0,length(Y)),
                                 D=D,
-                                covariates=covmat,      
+                                covariates=covmat,
+                                i.weights=(.w/sum(.w)),
                                 inffunc=TRUE)
   } else if (est_method == "reg") {
     attgt <- DRDID::reg_did_panel(y1=Y,
                                 y0=rep(0,length(Y)),
                                 D=D,
-                                covariates=covmat,      
+                                covariates=covmat,
+                                i.weights=(.w/sum(.w)),
                                 inffunc=TRUE)
   } else if (est_method == "grf") {
-    browser()
+    # sampling weights not supported here
+    # code requires custom version of grf package
     tau.forest <- causal_forest(X=covmat, Y=Y, W=D)
+    # predict(tau.forest)$predictions[D==1]
     
-    # check out the causal_forest code
-    predict(tau.forest)$predictions[D==1]
+    grf_res <- average_treatment_effect(tau.forest, method="AIPW", target.sample = "treated")
+    this_n <- nrow(covmat)
+    this_if <- as.matrix(grf_res$inf_func * this_n)
+    #V <- t(this_if) %*% this_if / this_n
+    #sqrt(V) / sqrt(this_n)
+    #V <- t(grf_res$inf_func/sqrt(this_n)) %*% grf_res$inf_func/sqrt(this_n)
+    attgt <- list(ATT=grf_res$estimate, att.inf.func=this_if)
+  } else if (est_method=="lasso") {
+    # code adapted from: https://thomaswiemann.com/ddml/articles/did.html
+    learners = list(what=ddml::mdl_glmnet)
+    learners_DX = learners
     
-    average_treatment_effect(tau.forest, method="AIPW", target.sample = "treated")
-    
-    # Add confidence intervals for heterogeneous treatment effects; growing more trees is now recommended.
-    tau.forest <- causal_forest(X, Y, W, num.trees = 4000)
-    tau.hat <- predict(tau.forest, X.test, estimate.variance = TRUE)
-    sigma.hat <- sqrt(tau.hat$variance.estimates)
+    att_fit <- ddml::ddml_att(y=Y, 
+                               D=D, 
+                               X=covmat, 
+                               learners=learners,
+                               learners_DX=learners_DX,
+                               sample_folds=10,
+                               silent=TRUE)
+    inf.func <- att_fit$psi_b + att_fit$att * att_fit$psi_a
+    attgt <- list(ATT=att_fit$att, att.inf.func=inf.func)
+  
   } else {
     stop(paste0("est_method: ", est_method, " is not supported"))
   }

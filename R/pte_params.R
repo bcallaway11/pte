@@ -105,6 +105,7 @@ setup_pte <- function(yname,
                       cband=TRUE,
                       alp=0.05,
                       boot_type="multiplier",
+                      weightsname=NULL,
                       gt_type="att",
                       ret_quantile=0.5,
                       biters=100,
@@ -117,6 +118,11 @@ setup_pte <- function(yname,
   G <- data[,gname]
   id <- data[,idname]
   period <- data[,tname]
+  if (is.null(weightsname)) {
+    .w <- rep(1, nrow(data))
+  } else {
+    .w <- data[,weightsname]
+  }
 
   data$G <- G
   data$id <- id
@@ -124,6 +130,7 @@ setup_pte <- function(yname,
   # data$original_period <- period
   # data$original_group <- G
   data$Y <- data[,yname]
+  data$.w <- .w
   
   time.periods <- unique(period)
   groups <- unique(data$G)
@@ -187,6 +194,7 @@ setup_pte <- function(yname,
                        boot_type=boot_type,
                        anticipation=anticipation,
                        base_period=base_period,
+                       weightsname=weightsname,
                        gt_type=gt_type,
                        ret_quantile=ret_quantile,
                        biters=biters,
@@ -195,40 +203,6 @@ setup_pte <- function(yname,
   params
 }
 
-#' @title t2orig
-#'
-#' @description A helper function to switch from "new" t values to
-#' original t values.  This allows for periods not being exactly spaced
-#' apart by 1.
-#'
-#' @param t a particular time period to convert back to original time
-#'  periods.
-#' @param original_time.periods vector containing all original time periods.
-#'
-#' @return original time period converted from new time period
-#' 
-#' @export
-t2orig <- function(t, original_time.periods) {
-  new_time.periods <- seq(1,length(unique(original_time.periods)))
-  unique(c(original_time.periods,0))[which(c(new_time.periods,0)==t)]
-}
-
-#' @title orig2t
-#'
-#' @description A helper function to switch from original time periods to
-#'  "new" time periods (which are just time periods going from 1 to total
-#'  number of available periods).  This allows for periods not being
-#'  exactly spaced apart by 1.
-#' 
-#' @inheritParams t2orig
-#'
-#' @return new time period converted from original time period
-#' 
-#' @export
-orig2t <- function(orig, original_time.periods) {
-  new_time.periods <- seq(1,length(unique(original_time.periods)))
-  c(new_time.periods,0)[which(unique(c(original_time.periods,0))==orig)]
-}
 
 #' @title pte_params
 #'
@@ -269,6 +243,7 @@ pte_params <- function(yname,
                        boot_type,
                        anticipation=NULL,
                        base_period=NULL,
+                       weightsname=NULL,
                        control_group="notyettreated",
                        gt_type="att",
                        ret_quantile=0.5,
@@ -288,6 +263,7 @@ pte_params <- function(yname,
               anticipation=anticipation,
               control_group=control_group,
               base_period=base_period,
+              weightsname=weightsname,
               gt_type=gt_type,
               ret_quantile=ret_quantile,
               biters=biters,
