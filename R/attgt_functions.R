@@ -5,7 +5,7 @@
 #'  and a corresponding influence function using a difference in differences
 #'  approach.
 #'
-#'  The code relies on \code{gt_data} having certain variables defined. 
+#'  The code relies on \code{gt_data} having certain variables defined.
 #'  In particular, there should be an \code{id} column (individual identifier),
 #'  \code{D} (treated group identifier), \code{period} (time period), \code{name}
 #'  (equal to "pre" for pre-treatment periods and equal to "post" for post
@@ -24,17 +24,18 @@
 #'
 #' @export
 did_attgt <- function(gt_data, xformla, ...) {
-
   #-----------------------------------------------------------------------------
   # handle covariates
   #-----------------------------------------------------------------------------
   # for outcome regression, get pre-treatment values
-  Xpre <- model.frame(xformla, data=subset(gt_data,name=="pre"))
+  Xpre <- model.frame(xformla, data = subset(gt_data, name == "pre"))
 
   # convert two period panel into one period
-  gt_data_outcomes <- tidyr::pivot_wider(gt_data[,c("D","id","period","name","Y")], id_cols=c(id, D),
-                                           names_from=c(name),
-                                           values_from=c(Y))
+  gt_data_outcomes <- tidyr::pivot_wider(gt_data[, c("D", "id", "period", "name", "Y")],
+    id_cols = c(id, D),
+    names_from = c(name),
+    values_from = c(Y)
+  )
 
   # merge outcome and covariate data
   gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre)
@@ -49,15 +50,18 @@ did_attgt <- function(gt_data, xformla, ...) {
   # call DRDID functions to make the computations;
   # just like in `did` package
   gt_dataX <- droplevels(gt_dataX)
-  attgt <- DRDID::drdid_panel(y1=Y_post,
-                              y0=Y_pre,
-                              D=D,
-                              covariates=model.matrix(xformla,
-                                                      data=gt_dataX),
-                              inffunc=TRUE)
+  attgt <- DRDID::drdid_panel(
+    y1 = Y_post,
+    y0 = Y_pre,
+    D = D,
+    covariates = model.matrix(xformla,
+      data = gt_dataX
+    ),
+    inffunc = TRUE
+  )
 
   # return attgt
-  attgt_if(attgt=attgt$ATT, inf_func=attgt$att.inf.func)
+  attgt_if(attgt = attgt$ATT, inf_func = attgt$att.inf.func)
 }
 
 
@@ -95,32 +99,34 @@ did_attgt <- function(gt_data, xformla, ...) {
 #' @return attgt_if
 #'
 #' @export
-pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lagged_outcome_cov=FALSE, est_method="dr", ...) {
+pte_attgt <- function(
+    gt_data,
+    xformla,
+    d_outcome = FALSE,
+    d_covs_formula = ~ -1, lagged_outcome_cov = FALSE,
+    est_method = "dr",
+    ...) {
+  this.g <- subset(gt_data, name == "post" & D == 1)$G
+  this.tp <- unique(subset(gt_data, name == "post")$period)
 
-  this.g <- subset(gt_data, name=="post" & D==1)$G
-  this.tp <- unique(subset(gt_data, name=="post")$period)
-  
   #-----------------------------------------------------------------------------
   # handle covariates
   #-----------------------------------------------------------------------------
-  
+
   # pre-treatment covariates
-  Xpre <- model.frame(xformla, data=subset(gt_data, name=="pre"))
-  .w <- subset(gt_data, name=="pre")$.w
+  Xpre <- model.frame(xformla, data = subset(gt_data, name == "pre"))
+  .w <- subset(gt_data, name == "pre")$.w
 
   # change in covariates
-  dX <- model.frame(d_covs_formula, data=subset(gt_data, name=="post")) - model.frame(d_covs_formula, data=subset(gt_data,name=="pre"))
+  dX <- model.frame(d_covs_formula, data = subset(gt_data, name == "post")) - model.frame(d_covs_formula, data = subset(gt_data, name == "pre"))
   if (ncol(dX) > 0) colnames(dX) <- paste0("d", colnames(dX))
 
-  # lagged outcome
-  #if (lagged_outcome_cov) lagY_formula <- ~ -1 + Y else lagY_formula <- ~ -1
-  #lagY <- model.frame(lagY_formula, data=subset(gt_data, name=="pre"))
-  
-
   # convert two period panel into one period
-  gt_data_outcomes <- tidyr::pivot_wider(gt_data[,c("D","id","period","name","Y")], id_cols=c(id, D),
-                                           names_from=c(name),
-                                           values_from=c(Y))
+  gt_data_outcomes <- tidyr::pivot_wider(gt_data[, c("D", "id", "period", "name", "Y")],
+    id_cols = c(id, D),
+    names_from = c(name),
+    values_from = c(Y)
+  )
 
   # merge outcome and covariate data
   gt_dataX <- cbind.data.frame(gt_data_outcomes, Xpre, dX, .w)
@@ -140,73 +146,77 @@ pte_attgt <- function(gt_data, xformla, d_outcome=FALSE, d_covs_formula=~-1, lag
   gt_dataX <- droplevels(gt_dataX)
   use_formula <- BMisc::toformula("", c(BMisc::rhs.vars(xformla), colnames(dX)))
   if (lagged_outcome_cov) use_formula <- BMisc::addCovToFormla("pre", use_formula)
-  covmat <- model.matrix(use_formula, data=gt_dataX)
-  covmat2 <- covmat[D==0,]
+  covmat <- model.matrix(use_formula, data = gt_dataX)
+  covmat2 <- covmat[D == 0, ]
   # www <- gt_dataX[D==0,]$.w
-  n_unt <- sum(1-D)
-  precheck_reg <- qr(t(covmat2)%*%covmat2/n_unt)
+  n_unt <- sum(1 - D)
+  precheck_reg <- qr(t(covmat2) %*% covmat2 / n_unt)
   keep_covs <- precheck_reg$pivot[1:precheck_reg$rank]
-  covmat <- covmat[,keep_covs]
-  
+  covmat <- covmat[, keep_covs]
+
   # if group is too small, switch to reg adjustment
-  if (est_method=="dr") {
-    pscore_est <- glm(D ~ covmat, family=binomial(link="logit"), weights=(.w/sum(.w)))
-    pscore <-predict(pscore_est, type="response")
+  if (est_method == "dr") {
+    pscore_est <- glm(D ~ covmat, family = binomial(link = "logit"), weights = (.w / sum(.w)))
+    pscore <- predict(pscore_est, type = "response")
     if (max(pscore) > 0.99) {
       est_method <- "reg"
-      warning(paste0("Switching to regression adjustment because of small group size for group ", 
-                     this.g, " in time period ", this.tp))
+      warning(paste0(
+        "Switching to regression adjustment because of small group size for group ",
+        this.g, " in time period ", this.tp
+      ))
     }
   }
-  
+
   if (est_method == "dr") {
-    attgt <- DRDID::drdid_panel(y1=Y,
-                                y0=rep(0,length(Y)),
-                                D=D,
-                                covariates=covmat,
-                                i.weights=(.w/sum(.w)),
-                                inffunc=TRUE)
+    attgt <- DRDID::drdid_panel(
+      y1 = Y,
+      y0 = rep(0, length(Y)),
+      D = D,
+      covariates = covmat,
+      i.weights = (.w / sum(.w)),
+      inffunc = TRUE
+    )
   } else if (est_method == "reg") {
-    attgt <- DRDID::reg_did_panel(y1=Y,
-                                y0=rep(0,length(Y)),
-                                D=D,
-                                covariates=covmat,
-                                i.weights=(.w/sum(.w)),
-                                inffunc=TRUE)
+    attgt <- DRDID::reg_did_panel(
+      y1 = Y,
+      y0 = rep(0, length(Y)),
+      D = D,
+      covariates = covmat,
+      i.weights = (.w / sum(.w)),
+      inffunc = TRUE
+    )
   } else if (est_method == "grf") {
     # sampling weights not supported here
     # code requires custom version of grf package
-    tau.forest <- causal_forest(X=covmat, Y=Y, W=D)
+    tau.forest <- causal_forest(X = covmat, Y = Y, W = D)
     # predict(tau.forest)$predictions[D==1]
-    
-    grf_res <- average_treatment_effect(tau.forest, method="AIPW", target.sample = "treated")
+
+    grf_res <- average_treatment_effect(tau.forest, method = "AIPW", target.sample = "treated")
     this_n <- nrow(covmat)
     this_if <- as.matrix(grf_res$inf_func * this_n)
-    #V <- t(this_if) %*% this_if / this_n
-    #sqrt(V) / sqrt(this_n)
-    #V <- t(grf_res$inf_func/sqrt(this_n)) %*% grf_res$inf_func/sqrt(this_n)
-    attgt <- list(ATT=grf_res$estimate, att.inf.func=this_if)
-  } else if (est_method=="lasso") {
+    # V <- t(this_if) %*% this_if / this_n
+    # sqrt(V) / sqrt(this_n)
+    # V <- t(grf_res$inf_func/sqrt(this_n)) %*% grf_res$inf_func/sqrt(this_n)
+    attgt <- list(ATT = grf_res$estimate, att.inf.func = this_if)
+  } else if (est_method == "lasso") {
     # code adapted from: https://thomaswiemann.com/ddml/articles/did.html
-    learners = list(what=ddml::mdl_glmnet)
-    learners_DX = learners
-    
-    att_fit <- ddml::ddml_att(y=Y, 
-                               D=D, 
-                               X=covmat, 
-                               learners=learners,
-                               learners_DX=learners_DX,
-                               sample_folds=10,
-                               silent=TRUE)
+    learners <- list(what = ddml::mdl_glmnet)
+    learners_DX <- learners
+
+    att_fit <- ddml::ddml_att(
+      y = Y,
+      D = D,
+      X = covmat,
+      learners = learners,
+      learners_DX = learners_DX,
+      sample_folds = 10,
+      silent = TRUE
+    )
     inf.func <- att_fit$psi_b + att_fit$att * att_fit$psi_a
-    attgt <- list(ATT=att_fit$att, att.inf.func=inf.func)
-  
+    attgt <- list(ATT = att_fit$att, att.inf.func = inf.func)
   } else {
     stop(paste0("est_method: ", est_method, " is not supported"))
   }
   # return attgt
-  pte::attgt_if(attgt=attgt$ATT, inf_func=attgt$att.inf.func)
+  pte::attgt_if(attgt = attgt$ATT, inf_func = attgt$att.inf.func)
 }
-
-
-

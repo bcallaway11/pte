@@ -29,28 +29,27 @@ setup_pte_basic <- function(yname,
                             tname,
                             idname,
                             data,
-                            cband=TRUE,
-                            alp=0.05,
-                            boot_type="multiplier",
-                            gt_type="att",
-                            ret_quantile=0.5,
-                            biters=100,
-                            cl=1,
+                            cband = TRUE,
+                            alp = 0.05,
+                            boot_type = "multiplier",
+                            gt_type = "att",
+                            ret_quantile = 0.5,
+                            biters = 100,
+                            cl = 1,
                             ...) {
-  
   data <- as.data.frame(data)
-  
+
   # setup data
-  G <- data[,gname]
-  id <- data[,idname]
-  period <- data[,tname]
+  G <- data[, gname]
+  id <- data[, idname]
+  period <- data[, tname]
 
   data$G <- G
   data$id <- id
   n <- length(unique(data$id))
   data$period <- period
-  data$Y <- data[,yname]
-  
+  data$Y <- data[, yname]
+
   time.periods <- unique(data$period)
   groups <- unique(data$G)
 
@@ -60,20 +59,22 @@ setup_pte_basic <- function(yname,
   # sort the time periods and drop the first period
   time.periods <- sort(time.periods)[-1]
 
-  params <- pte_params(yname=yname,
-                       gname=gname,
-                       tname=tname,
-                       idname=idname,
-                       data=data,
-                       glist=groups,
-                       tlist=time.periods,
-                       cband=cband,
-                       alp=alp,
-                       boot_type=boot_type,
-                       gt_type=gt_type,
-                       ret_quantile=ret_quantile,
-                       biters=biters,
-                       cl=cl)
+  params <- pte_params(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    glist = groups,
+    tlist = time.periods,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    gt_type = gt_type,
+    ret_quantile = ret_quantile,
+    biters = biters,
+    cl = cl
+  )
 
   params
 }
@@ -87,7 +88,7 @@ setup_pte_basic <- function(yname,
 #' The \code{setup_pte} function builds on \code{setup_pte_basic} and
 #' attempts to provide a general purpose function (with error handling)
 #' to arrange the data in a way that can be processed by \code{subset_fun}
-#' and \code{attgt_fun} in the next steps.  
+#' and \code{attgt_fun} in the next steps.
 #'
 #' @inheritParams setup_pte
 #'
@@ -99,29 +100,28 @@ setup_pte <- function(yname,
                       tname,
                       idname,
                       data,
-                      required_pre_periods=1,
-                      anticipation=0,
-                      base_period="varying",
-                      cband=TRUE,
-                      alp=0.05,
-                      boot_type="multiplier",
-                      weightsname=NULL,
-                      gt_type="att",
-                      ret_quantile=0.5,
-                      biters=100,
-                      cl=1,
+                      required_pre_periods = 1,
+                      anticipation = 0,
+                      base_period = "varying",
+                      cband = TRUE,
+                      alp = 0.05,
+                      boot_type = "multiplier",
+                      weightsname = NULL,
+                      gt_type = "att",
+                      ret_quantile = 0.5,
+                      biters = 100,
+                      cl = 1,
                       ...) {
-  
   data <- as.data.frame(data)
-  
+
   # setup data
-  G <- data[,gname]
-  id <- data[,idname]
-  period <- data[,tname]
+  G <- data[, gname]
+  id <- data[, idname]
+  period <- data[, tname]
   if (is.null(weightsname)) {
     .w <- rep(1, nrow(data))
   } else {
-    .w <- data[,weightsname]
+    .w <- data[, weightsname]
   }
 
   data$G <- G
@@ -129,9 +129,9 @@ setup_pte <- function(yname,
   n <- length(unique(data$id))
   # data$original_period <- period
   # data$original_group <- G
-  data$Y <- data[,yname]
+  data$Y <- data[, yname]
   data$.w <- .w
-  
+
   time.periods <- unique(period)
   groups <- unique(data$G)
 
@@ -146,19 +146,23 @@ setup_pte <- function(yname,
 
   # get new time periods / groups
   time.periods <- sapply(original_time.periods,
-                         orig2t,
-                         original_time.periods=original_time.periods)
+    BMisc::orig2t,
+    original_time.periods = original_time.periods
+  )
   groups <- sapply(original_groups,
-                   orig2t,
-                   original_time.periods=original_time.periods)
+    BMisc::orig2t,
+    original_time.periods = original_time.periods
+  )
 
   # put the period in new time scale
   data$period <- sapply(period,
-                        orig2t,
-                        original_time.periods=original_time.periods)
+    BMisc::orig2t,
+    original_time.periods = original_time.periods
+  )
   data$G <- sapply(G,
-                   orig2t,
-                   original_time.periods=original_time.periods)
+    BMisc::orig2t,
+    original_time.periods = original_time.periods
+  )
 
   t_adjust <- 0
   # sort the time periods and drop the first
@@ -168,37 +172,39 @@ setup_pte <- function(yname,
     time.periods <- sort(time.periods)
     groups <- groups[groups %in% time.periods[-1]]
     # account for anticipation
-    groups <- groups[ groups >= (min(time.periods+1)+anticipation) ]
+    groups <- groups[groups >= (min(time.periods + 1) + anticipation)]
     # drop early treated groups
-    data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
+    data <- data[!(data$G %in% seq(1, required_pre_periods + anticipation)), ]
   } else {
-    time.periods <- sort(time.periods)[-seq(1,required_pre_periods)]
+    time.periods <- sort(time.periods)[-seq(1, required_pre_periods)]
     groups <- groups[groups %in% time.periods]
     # account for anticipation
-    groups <- groups[ groups >= (min(time.periods)+anticipation) ]
+    groups <- groups[groups >= (min(time.periods) + anticipation)]
     # drop early treated groups
-    data <- data[ ! (data$G %in% seq(1,required_pre_periods+anticipation)), ]
+    data <- data[!(data$G %in% seq(1, required_pre_periods + anticipation)), ]
   }
-  
-  
 
-  params <- pte_params(yname=yname,
-                       gname=gname,
-                       tname=tname,
-                       idname=idname,
-                       data=data,
-                       glist=groups,
-                       tlist=time.periods,
-                       cband=cband,
-                       alp=alp,
-                       boot_type=boot_type,
-                       anticipation=anticipation,
-                       base_period=base_period,
-                       weightsname=weightsname,
-                       gt_type=gt_type,
-                       ret_quantile=ret_quantile,
-                       biters=biters,
-                       cl=cl)
+
+
+  params <- pte_params(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    glist = groups,
+    tlist = time.periods,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    anticipation = anticipation,
+    base_period = base_period,
+    weightsname = weightsname,
+    gt_type = gt_type,
+    ret_quantile = ret_quantile,
+    biters = biters,
+    cl = cl
+  )
 
   params
 }
@@ -219,11 +225,11 @@ setup_pte <- function(yname,
 #'  effects for
 #' @param alp significance level; default is 0.05
 #' @param boot_type which type of bootstrap to use
-#' @param anticipation how many periods before the treatment actually takes 
+#' @param anticipation how many periods before the treatment actually takes
 #'  place that it can have an effect on outcomes
-#' @param control_group Which group is used as the comparison group.  For 
-#'  backwards compatibility, the default choice is "notyettreated", but 
-#'  different estimation strategies can implement their own choices 
+#' @param control_group Which group is used as the comparison group.  For
+#'  backwards compatibility, the default choice is "notyettreated", but
+#'  different estimation strategies can implement their own choices
 #'  for the control group
 #' @param gt_type which type of group-time effects are computed.
 #'  For backward compatiblity, the default choice is "att"
@@ -241,33 +247,34 @@ pte_params <- function(yname,
                        cband,
                        alp,
                        boot_type,
-                       anticipation=NULL,
-                       base_period=NULL,
-                       weightsname=NULL,
-                       control_group="notyettreated",
-                       gt_type="att",
-                       ret_quantile=0.5,
+                       anticipation = NULL,
+                       base_period = NULL,
+                       weightsname = NULL,
+                       control_group = "notyettreated",
+                       gt_type = "att",
+                       ret_quantile = 0.5,
                        biters,
                        cl) {
-
-  obj <- list(yname=yname,
-              gname=gname,
-              tname=tname,
-              idname=idname,
-              data=data,
-              glist=glist,
-              tlist=tlist,
-              cband=cband,
-              alp=alp,
-              boot_type=boot_type,
-              anticipation=anticipation,
-              control_group=control_group,
-              base_period=base_period,
-              weightsname=weightsname,
-              gt_type=gt_type,
-              ret_quantile=ret_quantile,
-              biters=biters,
-              cl=cl)
+  obj <- list(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    glist = glist,
+    tlist = tlist,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    anticipation = anticipation,
+    control_group = control_group,
+    base_period = base_period,
+    weightsname = weightsname,
+    gt_type = gt_type,
+    ret_quantile = ret_quantile,
+    biters = biters,
+    cl = cl
+  )
 
   class(obj) <- "pte_params"
 
