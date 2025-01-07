@@ -17,6 +17,7 @@ pte_default(
   est_method = "dr",
   anticipation = 0,
   base_period = "varying",
+  control_group = "notyettreated",
   weightsname = NULL,
   cband = TRUE,
   alp = 0.05,

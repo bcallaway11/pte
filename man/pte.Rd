@@ -130,7 +130,7 @@ aggregating treatment effects (particularly useful are \code{min_e},
 \code{pte_results} object
 }
 \description{
-Tools for estimating treatment effects with panel data
+Tools for estimating treatment effects with panel data.
 
 Main function for computing panel treatment effects
 }
