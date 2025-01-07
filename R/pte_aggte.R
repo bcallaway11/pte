@@ -8,6 +8,8 @@
 #' where the only randomness is coming from the outcomes (not from the group
 #' assignment nor from the covariates).
 #' 
+#' @param attgt A group_time_att object to be aggregated
+#' @param type The type of aggregation to be done.  Default is "overall"
 pte_aggte <- function(attgt,
                       type="overall") {
 

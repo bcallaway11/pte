@@ -71,6 +71,12 @@ The default choice is "notyettreated", but
 different estimation strategies can implement their own choices
 for the control group}
 
+\item{weightsname}{The name of the column that contains sampling weights.
+The defaul is NULL, in which case no sampling weights are used.}
+
+\item{cband}{whether or not to report a uniform (instead of pointwise)
+confidence band (default is TRUE)}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{should be one of "multiplier" (the default) or "empirical".

@@ -7,11 +7,13 @@
 keep_all_pretreatment_subset(data, g, tp, ...)
 }
 \arguments{
-\item{data}{a data frame}
+\item{data}{the full dataset}
 
-\item{g}{group}
+\item{g}{the current group}
 
-\item{tp}{time period}
+\item{tp}{the current time period}
+
+\item{...}{additional arguments}
 }
 \value{
 all data but in correct format for computing ATT(g,t)

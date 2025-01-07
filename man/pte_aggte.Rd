@@ -6,6 +6,11 @@
 \usage{
 pte_aggte(attgt, type = "overall")
 }
+\arguments{
+\item{attgt}{A group_time_att object to be aggregated}
+
+\item{type}{The type of aggregation to be done.  Default is "overall"}
+}
 \description{
 This is a slight edit of the aggte function from the \code{did} package.
 Currently, it only provides aggregations for "overall" treatment effects

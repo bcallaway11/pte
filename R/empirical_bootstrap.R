@@ -3,6 +3,8 @@
 #' @description Computes empirical bootstrap pointwise standard errors
 #'
 #' @inheritParams compute.pte
+#' @inheritParams pte2
+#' @inheritParams attgt_if
 #' @param attgt.list list of attgt results from \code{compute.pte}
 #'
 #' @return \code{pte_emp_boot} object
@@ -164,6 +166,7 @@ panel_empirical_bootstrap <- function(attgt.list,
 #'  and (ii) combining distributions at the (g,t) level
 #'
 #' @inheritParams panel_empirical_bootstrap
+#' @inheritParams attgt_if
 #'
 #' @return \code{pte_emp_boot} object
 #'
@@ -306,6 +309,7 @@ attgt_pte_aggregations <- function(attgt.list, ptep) {
 #'  overall, group, and dynamic effects.
 #'
 #' @inheritParams attgt_pte_aggregations
+#' @inheritParams attgt_if
 #'
 #' @return \code{pte_emp_boot} object
 #'
@@ -386,6 +390,7 @@ qtt_pte_aggregations <- function(attgt.list, ptep, extra_gt_returns) {
 #'  overall, group, and dynamic effects.
 #'
 #' @inheritParams attgt_pte_aggregations
+#' @inheritParams attgt_if
 #'
 #' @return \code{pte_emp_boot} object
 #'

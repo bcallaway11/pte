@@ -35,6 +35,9 @@ setup_pte(
 
 \item{data}{balanced panel data}
 
+\item{required_pre_periods}{The number of required pre-treatment periods to implement
+the estimation strategy.  Default is 1.}
+
 \item{anticipation}{how many periods before the treatment actually takes
 place that it can have an effect on outcomes}
 
@@ -48,9 +51,15 @@ right before the treatment starts.  "Universal" is commonly used in
 difference-in-differences applications, but can be unnatural for other
 identification strategies.}
 
+\item{cband}{whether or not to report a uniform (instead of pointwise)
+confidence band (default is TRUE)}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{which type of bootstrap to use}
+
+\item{weightsname}{The name of the column that contains sampling weights.
+The defaul is NULL, in which case no sampling weights are used.}
 
 \item{gt_type}{which type of group-time effects are computed.
 The default is "att".  Different estimation strategies can implement
@@ -63,6 +72,8 @@ this is a specific quantile at which to report results, e.g.,
 \item{biters}{number of bootstrap iterations; default is 100}
 
 \item{cl}{number of clusters to be used when bootstrapping; default is 1}
+
+\item{...}{additional arguments}
 }
 \value{
 \code{pte_params} object

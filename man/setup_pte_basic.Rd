@@ -31,6 +31,9 @@ setup_pte_basic(
 
 \item{data}{balanced panel data}
 
+\item{cband}{whether or not to report a uniform (instead of pointwise)
+confidence band (default is TRUE)}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{which type of bootstrap to use}
@@ -46,6 +49,8 @@ this is a specific quantile at which to report results, e.g.,
 \item{biters}{number of bootstrap iterations; default is 100}
 
 \item{cl}{number of clusters to be used when bootstrapping; default is 1}
+
+\item{...}{additional arguments}
 }
 \value{
 \code{pte_params} object

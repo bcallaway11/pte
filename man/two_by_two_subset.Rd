@@ -28,6 +28,16 @@ two_by_two_subset(
 of periods before the treatment happens where the treatment can "already"
 affect the outcome)}
 
+\item{base_period}{The type of base period to use.  This only affects
+the numeric value of results in pre-treatment periods.  Results in
+post-treatment periods are not affected by this choice.  The default
+is "varying", where the base period will "back up" to the immediately
+preceding period in pre-treatment periods.  The other option is "universal"
+where the base period is fixed in pre-treatment periods to be the period
+right before the treatment starts.  "Universal" is commonly used in
+difference-in-differences applications, but can be unnatural for other
+identification strategies.}
+
 \item{...}{extra arguments to get the subset correct}
 }
 \value{

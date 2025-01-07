@@ -19,6 +19,9 @@
 #' @param alp significance level
 #' @param ptep \code{pte_params} object
 #' 
+#' @inheritParams pte_params
+#' @inheritParams attgt_if
+#' 
 #' @return object of class \code{group_time_att}
 #'
 #' @export
@@ -346,6 +349,10 @@ gt_data_frame <- function(data) {
 #' @param dyn_weights list containing weights on underlying ATT(g,t)
 #'  for each value of \code{e} corresponding to the dynamic treatment
 #'  effect parameters.
+#' @param group_weights vector containing weights on underlying ATT(g,t)
+#'  to group specific treatment effects
+#' 
+#' @inherit attgt_if
 #'
 #' @return pte_emp_boot object
 #'

@@ -99,6 +99,9 @@ objects will be computed using the empirical bootstrap.  This is usually
 (perhaps substantially) easier to code, but also will usually be (perhaps
 substantially) computationally slower.}
 
+\item{cband}{whether or not to report a uniform (instead of pointwise)
+confidence band (default is TRUE)}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{should be one of "multiplier" (the default) or "empirical".
@@ -107,6 +110,9 @@ to provide an expression for the influence function (which could be challenging
 to figure out).  If no influence function is provided, then the \code{pte}
 package will use the empirical bootstrap no matter what the value of this
 parameter.}
+
+\item{weightsname}{The name of the column that contains sampling weights.
+The defaul is NULL, in which case no sampling weights are used.}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 

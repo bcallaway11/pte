@@ -7,11 +7,13 @@
 keep_all_untreated_subset(data, g, tp, ...)
 }
 \arguments{
-\item{data}{a data frame}
+\item{data}{the full dataset}
 
-\item{g}{group}
+\item{g}{the current group}
 
-\item{tp}{time period}
+\item{tp}{the current time period}
+
+\item{...}{extra arguments to get the subset correct}
 }
 \value{
 all data but in correct format for computing ATT(g,t)

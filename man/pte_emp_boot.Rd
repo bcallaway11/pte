@@ -30,12 +30,21 @@ for overall treatment effect parameter}
 \item{dyn_weights}{list containing weights on underlying ATT(g,t)
 for each value of \code{e} corresponding to the dynamic treatment
 effect parameters.}
+
+\item{group_weights}{vector containing weights on underlying ATT(g,t)
+to group specific treatment effects}
+
+\item{extra_gt_returns}{A place to return anything extra from particular
+group-time average treatment effect calculations.  For DID, this might
+be something like propensity score estimates, regressions of untreated
+potential outcomes on covariates.  For ife, this could be something
+like the first step regression 2sls estimates.  This argument is also
+potentially useful for debugging.}
 }
 \value{
 pte_emp_boot object
 }
 \description{
-pte_emp_boot
-
-Class for holding \code{pte} empirical bootstrap results
+Class for holding group-time average treatment effects
+along with their influence function
 }

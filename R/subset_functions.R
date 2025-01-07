@@ -4,6 +4,8 @@
 #'   This is the subset with post treatment periods separately for the
 #'   treated group and comparison group and pre-treatment periods in the period
 #'   immediately before the treated group became treated.
+#' 
+#' @inheritParams pte_params
 #'
 #' @param data the full dataset
 #' @param g the current group
@@ -95,9 +97,7 @@ two_by_two_subset <- function(data,
 #' A main use case for this function is to compute ATT(g,t)'s using a global
 #' estimation strategy such as imputation in Gardner (2022).
 #'
-#' @param data a data frame
-#' @param g group
-#' @param tp time period
+#' @inheritParams two_by_two_subset
 #'
 #' @return all data but in correct format for computing ATT(g,t)
 #'
@@ -140,9 +140,8 @@ keep_all_untreated_subset <- function(data, g, tp, ...) {
 #' A main use case for this function is the interactive fixed effects approach
 #' proposed in Callaway and Tsyawo (2023).
 #'
-#' @param data a data frame
-#' @param g group
-#' @param tp time period
+#' @inheritParams two_by_two_subset
+#' @param ... additional arguments
 #'
 #' @return all data but in correct format for computing ATT(g,t)
 #'

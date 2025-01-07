@@ -20,6 +20,7 @@
 #' that the data is in the correct format, etc.
 #'
 #' @inheritParams pte_params
+#' @param ... additional arguments
 #'
 #' @return \code{pte_params} object
 #'
@@ -91,6 +92,9 @@ setup_pte_basic <- function(yname,
 #' and \code{attgt_fun} in the next steps.
 #'
 #' @inheritParams pte_params
+#' @param required_pre_periods The number of required pre-treatment periods to implement 
+#'  the estimation strategy.  Default is 1.
+#' @param ... additional arguments
 #'
 #' @return \code{pte_params} object
 #'
@@ -238,6 +242,8 @@ setup_pte <- function(yname,
 #'  right before the treatment starts.  "Universal" is commonly used in
 #'  difference-in-differences applications, but can be unnatural for other
 #'  identification strategies.
+#' @param weightsname The name of the column that contains sampling weights.
+#'  The defaul is NULL, in which case no sampling weights are used.
 #' @param control_group Which group is used as the comparison group.
 #'  The default choice is "notyettreated", but
 #'  different estimation strategies can implement their own choices
