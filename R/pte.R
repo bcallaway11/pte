@@ -22,13 +22,13 @@ compute.pte <- function(ptep,
   tname <- ptep$tname
   base_period <- ptep$base_period
   anticipation <- ptep$anticipation
-  
+
   data <- as.data.frame(data)
-  
+
   # setup data
-  G <- data[,gname]
-  id <- data[,idname]
-  period <- data[,tname]
+  G <- data[, gname]
+  id <- data[, idname]
+  period <- data[, tname]
   n <- length(unique(data$id))
 
   # pick up all time periods
@@ -43,26 +43,28 @@ compute.pte <- function(ptep,
   counter <- 1
   nG <- length(groups)
   nT <- length(time.periods)
-  inffunc <- matrix(data=NA, nrow=n, ncol=nG*(nT))
+  inffunc <- matrix(data = NA, nrow = n, ncol = nG * (nT))
 
   # list to hold extra results from gt-specific calculations
   extra_gt_returns <- list()
-  
+
   # loop over all groups
   for (g in groups) {
-        
     # loop over all time periods
     for (tp in time.periods) {
-      
       if (isTRUE(base_period == "universal")) {
-        if (tp == (g-1-anticipation)) {
-          attgt.list[[counter]] <- list(att=0,
-                                        group=g,
-                                        time.period=tp)
-        
-          extra_gt_returns[[counter]] <- list(extra_gt_returns=NULL,
-                                              group=g,
-                                              time.period=tp)      
+        if (tp == (g - 1 - anticipation)) {
+          attgt.list[[counter]] <- list(
+            att = 0,
+            group = g,
+            time.period = tp
+          )
+
+          extra_gt_returns[[counter]] <- list(
+            extra_gt_returns = NULL,
+            group = g,
+            time.period = tp
+          )
           counter <- counter + 1
           next
         }
@@ -70,7 +72,7 @@ compute.pte <- function(ptep,
       #-----------------------------------------------------------------------------
       # code to get the right subset of the data
       #-----------------------------------------------------------------------------
-      gt_subset <- subset_fun(data, g, tp, ... )
+      gt_subset <- subset_fun(data, g, tp, ...)
       gt_data <- gt_subset$gt_data
       n1 <- gt_subset$n1
       disidx <- gt_subset$disidx
@@ -78,7 +80,7 @@ compute.pte <- function(ptep,
       #-----------------------------------------------------------------------------
       # code to estimate attgt using correct relevant data
       #-----------------------------------------------------------------------------
-      attgt <- attgt_fun(gt_data=gt_data, ...)
+      attgt <- attgt_fun(gt_data = gt_data, ...)
 
 
       #-----------------------------------------------------------------------------
@@ -88,35 +90,37 @@ compute.pte <- function(ptep,
       #-----------------------------------------------------------------------------
 
       # save results
-      attgt.list[[counter]] <- list(att=attgt$attgt,
-                                    group=g,
-                                    time.period=tp)
+      attgt.list[[counter]] <- list(
+        att = attgt$attgt,
+        group = g,
+        time.period = tp
+      )
 
-      extra_gt_returns[[counter]] <- list(extra_gt_returns=attgt$extra_gt_returns,
-                                          group=g,
-                                          time.period=tp)
+      extra_gt_returns[[counter]] <- list(
+        extra_gt_returns = attgt$extra_gt_returns,
+        group = g,
+        time.period = tp
+      )
 
 
       # code if influence function is available
-      if ( !is.null(attgt$inf_func) ) {
+      if (!is.null(attgt$inf_func)) {
         # adjust for relative sizes of overall data
         # and groups used for this attgt
-        attgt$inf_func <- (n/n1)*attgt$inf_func
+        attgt$inf_func <- (n / n1) * attgt$inf_func
 
-        this.inf_func <- rep(0,n)
+        this.inf_func <- rep(0, n)
         this.inf_func[disidx] <- attgt$inf_func
-        inffunc[,counter] <- this.inf_func
+        inffunc[, counter] <- this.inf_func
       }
 
-      #cat("counter: ", counter, "\n")
-      counter <- counter+1
+      # cat("counter: ", counter, "\n")
+      counter <- counter + 1
       #----------------------------------------------------
-
     }
   }
 
-  return(list(attgt.list=attgt.list, inffunc=inffunc, extra_gt_returns=extra_gt_returns))
-
+  return(list(attgt.list = attgt.list, inffunc = inffunc, extra_gt_returns = extra_gt_returns))
 }
 
 #' @title compute.pte2
@@ -126,17 +130,17 @@ compute.pte <- function(ptep,
 #'   loops over time periods first (instead of groups) and tries to
 #'   estimate model for untreated potential outcomes jointly for all groups.
 #'
-#' @inheritParams pte
+#' @inheritParams pte2
 #' @param ptep \code{pte_params} object
 #'
 #' @return list of attgt results and, sometimes, an influence function
 #'
 #' @export
 compute.pte2 <- function(ptep,
-                        subset_fun,
-                        attgt_fun,
-                        global_model=FALSE,
-                        ...) {
+                         subset_fun,
+                         attgt_fun,
+                         global_model = FALSE,
+                         ...) {
   #-----------------------------------------------------------------------------
   # unpack ptep
   #-----------------------------------------------------------------------------
@@ -145,16 +149,16 @@ compute.pte2 <- function(ptep,
   gname <- ptep$gname
   idname <- ptep$idname
   tname <- ptep$tname
-  
-  
+
+
   data <- as.data.frame(data)
-  
+
   # setup data
-  G <- data[,gname]
-  id <- data[,idname]
-  period <- data[,tname]
+  G <- data[, gname]
+  id <- data[, idname]
+  period <- data[, tname]
   n <- length(unique(data$id))
-  
+
   # pick up all time periods
   time.periods <- ptep$tlist
 
@@ -167,27 +171,42 @@ compute.pte2 <- function(ptep,
   counter <- 1
   nG <- length(groups)
   nT <- length(time.periods)
-  inffunc <- matrix(data=NA, nrow=n, ncol=nG*(nT))
+  inffunc <- matrix(data = NA, nrow = n, ncol = nG * (nT))
 
   # list to hold extra results from gt-specific calculations
   extra_gt_returns <- list()
 
   if (global_model) {
-    data$y0 <- attgt_fun(data, ptep, ...) 
+    data$y0 <- attgt_fun(data, ptep, ...)
+    stop("global_model not supported yet...")
   }
-  
+
   # loop over all time periods
   for (tp in time.periods) {
-
-    
-
     # loop over all groups
     for (g in groups) {
-      
+      if (isTRUE(base_period == "universal")) {
+        if (tp == (g - 1 - anticipation)) {
+          attgt.list[[counter]] <- list(
+            att = 0,
+            group = g,
+            time.period = tp
+          )
+
+          extra_gt_returns[[counter]] <- list(
+            extra_gt_returns = NULL,
+            group = g,
+            time.period = tp
+          )
+          counter <- counter + 1
+          next
+        }
+      }
+
       #-----------------------------------------------------------------------------
       # code to get the right subset of the data
       #-----------------------------------------------------------------------------
-      gt_subset <- subset_fun(data, g, tp, ... )
+      gt_subset <- subset_fun(data, g, tp, ...)
       gt_data <- gt_subset$gt_data
       n1 <- gt_subset$n1
       disidx <- gt_subset$disidx
@@ -195,7 +214,7 @@ compute.pte2 <- function(ptep,
       #-----------------------------------------------------------------------------
       # code to estimate attgt using correct relevant data
       #-----------------------------------------------------------------------------
-      attgt <- attgt_fun(gt_data=gt_data, ...)
+      attgt <- attgt_fun(gt_data = gt_data, ...)
 
       #-----------------------------------------------------------------------------
       # If this is too generic...
@@ -210,35 +229,37 @@ compute.pte2 <- function(ptep,
       #-----------------------------------------------------------------------------
 
       # save results
-      attgt.list[[counter]] <- list(att=attgt$attgt,
-                                    group=g,
-                                    time.period=tp)
+      attgt.list[[counter]] <- list(
+        att = attgt$attgt,
+        group = g,
+        time.period = tp
+      )
 
-      extra_gt_returns[[counter]] <- list(extra_gt_returns=attgt$extra_gt_returns,
-                                          group=g,
-                                          time.period=tp)
+      extra_gt_returns[[counter]] <- list(
+        extra_gt_returns = attgt$extra_gt_returns,
+        group = g,
+        time.period = tp
+      )
 
 
       # code if influence function is available
-      if ( !is.null(attgt$inf_func) ) {
+      if (!is.null(attgt$inf_func)) {
         # adjust for relative sizes of overall data
         # and groups used for this attgt
-        attgt$inf_func <- (n/n1)*attgt$inf_func
+        attgt$inf_func <- (n / n1) * attgt$inf_func
 
-        this.inf_func <- rep(0,n)
+        this.inf_func <- rep(0, n)
         this.inf_func[disidx] <- attgt$inf_func
-        inffunc[,counter] <- this.inf_func
+        inffunc[, counter] <- this.inf_func
       }
 
-      #cat("counter: ", counter, "\n")
-      counter <- counter+1
+      # cat("counter: ", counter, "\n")
+      counter <- counter + 1
       #----------------------------------------------------
-
     }
   }
 
-  return(list(attgt.list=attgt.list, inffunc=inffunc, extra_gt_returns=extra_gt_returns))
-
+  return(list(attgt.list = attgt.list, inffunc = inffunc, extra_gt_returns = extra_gt_returns))
 }
 
 
@@ -262,7 +283,7 @@ compute.pte2 <- function(ptep,
 #'
 #'  This function provides also provides a good place for error handling related
 #'  to the types of data that can be handled.
-#' 
+#'
 #'  The \code{pte} package contains the function \code{setup_pte} that is
 #'  a lightweight function that basically just takes the data, omits
 #'  the never-treated group from \code{glist} but includes all other groups
@@ -272,7 +293,7 @@ compute.pte2 <- function(ptep,
 #'  "works" with access to a treated and untreated group and untreated
 #'  potential outcomes for both groups in the first period) --- for example,
 #'  this approach works if DID is the identification strategy.
-#'  
+#'
 #' @param subset_fun This is a function that should take in \code{data},
 #'  \code{g} (for group), \code{tp} (for time period), and \code{...}
 #'  and be able to return the appropriate \code{data.frame} that can be used
@@ -307,7 +328,7 @@ compute.pte2 <- function(ptep,
 #'  objects will be computed using the empirical bootstrap.  This is usually
 #'  (perhaps substantially) easier to code, but also will usually be (perhaps
 #'  substantially) computationally slower.
-#'  
+#'
 #' @param boot_type should be one of "multiplier" (the default) or "empirical".
 #'  The multiplier bootstrap is generally much faster, but \code{attgt_fun} needs
 #'  to provide an expression for the influence function (which could be challenging
@@ -339,59 +360,63 @@ pte <- function(yname,
                 setup_pte_fun,
                 subset_fun,
                 attgt_fun,
-                cband=TRUE,
-                alp=0.05,
-                boot_type="multiplier",
-                weightsname=NULL,
-                biters=100,
-                cl=1,
-                gt_type="att",
-                ret_quantile=NULL,
+                cband = TRUE,
+                alp = 0.05,
+                boot_type = "multiplier",
+                weightsname = NULL,
+                biters = 100,
+                cl = 1,
+                gt_type = "att",
+                ret_quantile = NULL,
                 ...) {
+  .Deprecated("pte2")
 
+  ptep <- setup_pte_fun(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    weightsname = weightsname,
+    gt_type = gt_type,
+    ret_quantile = ret_quantile,
+    biters = biters,
+    cl = cl,
+    ...
+  )
 
-  ptep <- setup_pte_fun(yname=yname,
-                        gname=gname,
-                        tname=tname,
-                        idname=idname,
-                        data=data,
-                        cband=cband,
-                        alp=alp,
-                        boot_type=boot_type,
-                        weightsname=weightsname,
-                        gt_type=gt_type,
-                        ret_quantile=ret_quantile,
-                        biters=biters,
-                        cl=cl,
-                        ...)
-  
-  res <- compute.pte(ptep=ptep,
-                     subset_fun=subset_fun,
-                     attgt_fun=attgt_fun,
-                     ...)
+  res <- compute.pte(
+    ptep = ptep,
+    subset_fun = subset_fun,
+    attgt_fun = attgt_fun,
+    ...
+  )
 
   # check if no influence function provided,
   # if yes, go to alternate code for empirical
   # bootstrap
-  if (all(is.na(res$inffunc)) | ptep$boot_type=="empirical")  {
-    
+  if (all(is.na(res$inffunc)) | ptep$boot_type == "empirical") {
     return(panel_empirical_bootstrap(res$attgt.list,
-                                     ptep,
-                                     setup_pte_fun,
-                                     subset_fun,
-                                     attgt_fun,
-                                     extra_gt_returns=res$extra_gt_returns,
-                                     ...))
+      ptep,
+      setup_pte_fun,
+      subset_fun,
+      attgt_fun,
+      extra_gt_returns = res$extra_gt_returns,
+      ...
+    ))
   }
 
-  att_gt <- process_att_gt(res,ptep)
+  att_gt <- process_att_gt(res, ptep)
 
   #-----------------------------------------------------------------------------
   # aggregate ATT(g,t)'s
   #-----------------------------------------------------------------------------
 
   # overall
-  overall_att <- did::aggte(att_gt, type="group", bstrap=TRUE, cband=cband, alp=ptep$alp)
+  overall_att <- did::aggte(att_gt, type = "group", bstrap = TRUE, cband = cband, alp = ptep$alp)
 
   # event study
   # ... for max_e and min_e
@@ -399,15 +424,17 @@ pte <- function(yname,
   min_e <- ifelse(is.null(dots$min_e), -Inf, dots$min_e)
   max_e <- ifelse(is.null(dots$max_e), Inf, dots$max_e)
   balance_e <- dots$balance_e
-  
-  event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=cband, alp=ptep$alp, min_e=min_e, max_e=max_e, balance_e=balance_e)
+
+  event_study <- did::aggte(att_gt, type = "dynamic", bstrap = TRUE, cband = cband, alp = ptep$alp, min_e = min_e, max_e = max_e, balance_e = balance_e)
 
   # output
-  out <- pte_results(att_gt=att_gt,
-                     overall_att=overall_att,
-                     event_study=event_study,
-                     ptep=ptep)
-  
+  out <- pte_results(
+    att_gt = att_gt,
+    overall_att = overall_att,
+    event_study = event_study,
+    ptep = ptep
+  )
+
   out
 }
 
@@ -432,7 +459,7 @@ pte <- function(yname,
 #'
 #'  This function provides also provides a good place for error handling related
 #'  to the types of data that can be handled.
-#' 
+#'
 #'  The \code{pte} package contains the function \code{setup_pte} that is
 #'  a lightweight function that basically just takes the data, omits
 #'  the never-treated group from \code{glist} but includes all other groups
@@ -442,7 +469,7 @@ pte <- function(yname,
 #'  "works" with access to a treated and untreated group and untreated
 #'  potential outcomes for both groups in the first period) --- for example,
 #'  this approach works if DID is the identification strategy.
-#'  
+#'
 #' @param subset_fun This is a function that should take in \code{data},
 #'  \code{g} (for group), \code{tp} (for time period), and \code{...}
 #'  and be able to return the appropriate \code{data.frame} that can be used
@@ -495,66 +522,71 @@ pte <- function(yname,
 #'
 #' @export
 pte2 <- function(yname,
-                gname,
-                tname,
-                idname,
-                data,
-                setup_pte_fun,
-                subset_fun,
-                attgt_fun,
-                cband=TRUE,
-                alp=0.05,
-                boot_type="multiplier",
-                gt_type="att", 
-                biters=100,
-                cl=1,
-                ...) {
+                 gname,
+                 tname,
+                 idname,
+                 data,
+                 setup_pte_fun,
+                 subset_fun,
+                 attgt_fun,
+                 cband = TRUE,
+                 alp = 0.05,
+                 boot_type = "multiplier",
+                 gt_type = "att",
+                 ret_quantile = NULL,
+                 process_dtt_gt = NULL,
+                 biters = 100,
+                 cl = 1,
+                 ...) {
+  ptep <- setup_pte_fun(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    gt_type = gt_type,
+    ret_quantile = ret_quantile,
+    biters = biters,
+    cl = cl,
+    ...
+  )
 
-
-  ptep <- setup_pte_fun(yname=yname,
-                        gname=gname,
-                        tname=tname,
-                        idname=idname,
-                        data=data,
-                        cband=cband,
-                        alp=alp,
-                        boot_type=boot_type,
-                        gt_type=gt_type,
-                        biters=biters,
-                        cl=cl,
-                        ...)
-
-  res <- compute.pte2(ptep=ptep,
-                     subset_fun=subset_fun,
-                     attgt_fun=attgt_fun,
-                     ...)
+  res <- compute.pte2(
+    ptep = ptep,
+    subset_fun = subset_fun,
+    attgt_fun = attgt_fun,
+    ...
+  )
 
   # check if no influence function provided,
   # if yes, go to alternate code for empirical
   # bootstrap
-  if (all(is.na(res$inffunc)) | ptep$boot_type=="empirical")  {
-
+  if (all(is.na(res$inffunc)) | ptep$boot_type == "empirical") {
     if (gt_type == "dtt") {
-      res <- process_dtt_gt(res,ptep)
+      res <- process_dtt_gt(res, ptep)
     }
-    
+
     return(panel_empirical_bootstrap(res$attgt.list,
-                                     ptep,
-                                     setup_pte_fun,
-                                     subset_fun,
-                                     attgt_fun,
-                                     extra_gt_returns=res$extra_gt_returns,
-                                     ...))
+      ptep,
+      setup_pte_fun,
+      subset_fun,
+      attgt_fun,
+      extra_gt_returns = res$extra_gt_returns,
+      ...
+    ))
   }
 
-  att_gt <- process_att_gt(res,ptep)
+  att_gt <- process_att_gt(res, ptep)
 
   #-----------------------------------------------------------------------------
   # aggregate ATT(g,t)'s
   #-----------------------------------------------------------------------------
 
   # overall
-  overall_att <- did::aggte(att_gt, type="group", bstrap=TRUE, cband=cband, alp=ptep$alp)
+  overall_att <- did::aggte(att_gt, type = "group", bstrap = TRUE, cband = cband, alp = ptep$alp)
 
   # event study
   # ... for max_e and min_e
@@ -562,15 +594,17 @@ pte2 <- function(yname,
   min_e <- ifelse(is.null(dots$min_e), -Inf, dots$min_e)
   max_e <- ifelse(is.null(dots$max_e), Inf, dots$max_e)
   balance_e <- dots$balance_e
-  
-  event_study <- did::aggte(att_gt, type="dynamic", bstrap=TRUE, cband=cband, alp=ptep$alp, min_e=min_e, max_e=max_e, balance_e=balance_e)
+
+  event_study <- did::aggte(att_gt, type = "dynamic", bstrap = TRUE, cband = cband, alp = ptep$alp, min_e = min_e, max_e = max_e, balance_e = balance_e)
 
   # output
-  out <- pte_results(att_gt=att_gt,
-                     overall_att=overall_att,
-                     event_study=event_study,
-                     ptep=ptep)
-  
+  out <- pte_results(
+    att_gt = att_gt,
+    overall_att = overall_att,
+    event_study = event_study,
+    ptep = ptep
+  )
+
   out
 }
 
@@ -592,43 +626,44 @@ pte_default <- function(yname,
                         tname,
                         idname,
                         data,
-                        xformla=~1,
-                        d_outcome=FALSE,
-                        d_covs_formula=~-1,
-                        lagged_outcome_cov=FALSE,
-                        est_method="dr",
-                        anticipation=0,
-                        base_period="varying",
-                        control_group="notyettreated",
-                        weightsname=NULL,
-                        cband=TRUE,
-                        alp=0.05,
-                        boot_type="multiplier",
-                        biters=100,
-                        cl=1) {
-
-  res <- pte(yname=yname,
-             gname=gname,
-             tname=tname,
-             idname=idname,
-             data=data,
-             setup_pte_fun=setup_pte,
-             subset_fun=two_by_two_subset,
-             attgt_fun=pte_attgt,
-             xformla=xformla,
-             d_outcome=d_outcome,
-             d_covs_formula=d_covs_formula,
-             lagged_outcome_cov=lagged_outcome_cov,
-             est_method=est_method,
-             anticipation=anticipation,
-             base_period=base_period,
-             control_group=control_group,
-             weightsname=weightsname,
-             cband=cband,
-             alp=alp,
-             boot_type=boot_type,
-             biters=biters,
-             cl=cl)
+                        xformla = ~1,
+                        d_outcome = FALSE,
+                        d_covs_formula = ~ -1,
+                        lagged_outcome_cov = FALSE,
+                        est_method = "dr",
+                        anticipation = 0,
+                        base_period = "varying",
+                        control_group = "notyettreated",
+                        weightsname = NULL,
+                        cband = TRUE,
+                        alp = 0.05,
+                        boot_type = "multiplier",
+                        biters = 100,
+                        cl = 1) {
+  res <- pte(
+    yname = yname,
+    gname = gname,
+    tname = tname,
+    idname = idname,
+    data = data,
+    setup_pte_fun = setup_pte,
+    subset_fun = two_by_two_subset,
+    attgt_fun = pte_attgt,
+    xformla = xformla,
+    d_outcome = d_outcome,
+    d_covs_formula = d_covs_formula,
+    lagged_outcome_cov = lagged_outcome_cov,
+    est_method = est_method,
+    anticipation = anticipation,
+    base_period = base_period,
+    control_group = control_group,
+    weightsname = weightsname,
+    cband = cband,
+    alp = alp,
+    boot_type = boot_type,
+    biters = biters,
+    cl = cl
+  )
 
   res
 }

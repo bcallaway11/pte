@@ -49,13 +49,24 @@ effects for}
 \item{anticipation}{how many periods before the treatment actually takes
 place that it can have an effect on outcomes}
 
-\item{control_group}{Which group is used as the comparison group.  For
-backwards compatibility, the default choice is "notyettreated", but
+\item{base_period}{The type of base period to use.  This only affects
+the numeric value of results in pre-treatment periods.  Results in
+post-treatment periods are not affected by this choice.  The default
+is "varying", where the base period will "back up" to the immediately
+preceding period in pre-treatment periods.  The other option is "universal"
+where the base period is fixed in pre-treatment periods to be the period
+right before the treatment starts.  "Universal" is commonly used in
+difference-in-differences applications, but can be unnatural for other
+identification strategies.}
+
+\item{control_group}{Which group is used as the comparison group.
+The default choice is "notyettreated", but
 different estimation strategies can implement their own choices
 for the control group}
 
 \item{gt_type}{which type of group-time effects are computed.
-For backward compatiblity, the default choice is "att"}
+The default is "att".  Different estimation strategies can implement
+their own choices for \code{gt_type}}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 

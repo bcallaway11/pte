@@ -36,7 +36,8 @@ setup_pte_basic(
 \item{boot_type}{which type of bootstrap to use}
 
 \item{gt_type}{which type of group-time effects are computed.
-For backward compatiblity, the default choice is "att"}
+The default is "att".  Different estimation strategies can implement
+their own choices for \code{gt_type}}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 

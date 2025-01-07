@@ -24,6 +24,10 @@ two_by_two_subset(
 \item{control_group}{whether to use "notyettreated" (default) or
 "nevertreated"}
 
+\item{anticipation}{the number of periods of anticipation (i.e., number
+of periods before the treatment happens where the treatment can "already"
+affect the outcome)}
+
 \item{...}{extra arguments to get the subset correct}
 }
 \value{

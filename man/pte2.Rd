@@ -17,6 +17,8 @@ pte2(
   alp = 0.05,
   boot_type = "multiplier",
   gt_type = "att",
+  ret_quantile = NULL,
+  process_dtt_gt = NULL,
   biters = 100,
   cl = 1,
   ...
@@ -105,7 +107,8 @@ package will use the empirical bootstrap no matter what the value of this
 parameter.}
 
 \item{gt_type}{which type of group-time effects are computed.
-For backward compatiblity, the default choice is "att"}
+The default is "att".  Different estimation strategies can implement
+their own choices for \code{gt_type}}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 
