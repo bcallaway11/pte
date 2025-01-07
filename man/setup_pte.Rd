@@ -56,6 +56,10 @@ identification strategies.}
 The default is "att".  Different estimation strategies can implement
 their own choices for \code{gt_type}}
 
+\item{ret_quantile}{For functions that compute quantile treatment effects,
+this is a specific quantile at which to report results, e.g.,
+\code{ret_quantile = 0.5} will return that the qte at the median.}
+
 \item{biters}{number of bootstrap iterations; default is 100}
 
 \item{cl}{number of clusters to be used when bootstrapping; default is 1}

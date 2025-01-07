@@ -120,6 +120,10 @@ return a vector of counterfactual outcomes for each unit in the data, from
 which a counterfactual distribution can be computed.  Additional arguments
 will often need to be provided in this case.}
 
+\item{ret_quantile}{For functions that compute quantile treatment effects,
+this is a specific quantile at which to report results, e.g.,
+\code{ret_quantile = 0.5} will return that the qte at the median.}
+
 \item{...}{extra arguments that can be passed to create the correct subsets
 of the data (depending on \code{subset_fun}), to estimate group time
 average treatment effects (depending on \code{attgt_fun}), or to

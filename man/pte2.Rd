@@ -19,6 +19,9 @@ pte2(
   gt_type = "att",
   ret_quantile = NULL,
   process_dtt_gt = NULL,
+  global_fun = FALSE,
+  time_period_fun = FALSE,
+  group_fun = FALSE,
   biters = 100,
   cl = 1,
   ...
@@ -109,6 +112,21 @@ parameter.}
 \item{gt_type}{which type of group-time effects are computed.
 The default is "att".  Different estimation strategies can implement
 their own choices for \code{gt_type}}
+
+\item{ret_quantile}{For functions that compute quantile treatment effects,
+this is a specific quantile at which to report results, e.g.,
+\code{ret_quantile = 0.5} will return that the qte at the median.}
+
+\item{global_fun}{Logical indicating whether or not untreated potential
+outcomes can be estimated in one shot, i.e., for all groups and time periods.
+Main use case would be for one-shot imputation estimators.  Not supported yet.}
+
+\item{time_period_fun}{Logical indicating whether or not untreated potential
+outcomes can be estimated for all groups in the same time period.  Not supported yet.}
+
+\item{group_fun}{Logical indicating whether or not untreated potential outcomes
+can be estimated for all time periods for a single group.  Not supported yet.
+These functions aim at reducing or eliminating running the same code multiple times.}
 
 \item{biters}{number of bootstrap iterations; default is 100}
 

@@ -53,6 +53,24 @@ Default is FALSE.}
 \item{est_method}{Which type of estimation method to use. Default is "dr" for
 doubly robust.  The other option is "reg" for regression adjustment.}
 
+\item{anticipation}{how many periods before the treatment actually takes
+place that it can have an effect on outcomes}
+
+\item{base_period}{The type of base period to use.  This only affects
+the numeric value of results in pre-treatment periods.  Results in
+post-treatment periods are not affected by this choice.  The default
+is "varying", where the base period will "back up" to the immediately
+preceding period in pre-treatment periods.  The other option is "universal"
+where the base period is fixed in pre-treatment periods to be the period
+right before the treatment starts.  "Universal" is commonly used in
+difference-in-differences applications, but can be unnatural for other
+identification strategies.}
+
+\item{control_group}{Which group is used as the comparison group.
+The default choice is "notyettreated", but
+different estimation strategies can implement their own choices
+for the control group}
+
 \item{alp}{significance level; default is 0.05}
 
 \item{boot_type}{should be one of "multiplier" (the default) or "empirical".

@@ -4,7 +4,7 @@
 \alias{compute.pte2}
 \title{compute.pte2}
 \usage{
-compute.pte2(ptep, subset_fun, attgt_fun, global_model = FALSE, ...)
+compute.pte2(ptep, subset_fun, attgt_fun, ...)
 }
 \arguments{
 \item{ptep}{\code{pte_params} object}

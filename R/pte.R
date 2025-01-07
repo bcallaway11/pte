@@ -139,7 +139,6 @@ compute.pte <- function(ptep,
 compute.pte2 <- function(ptep,
                          subset_fun,
                          attgt_fun,
-                         global_model = FALSE,
                          ...) {
   #-----------------------------------------------------------------------------
   # unpack ptep
@@ -149,6 +148,9 @@ compute.pte2 <- function(ptep,
   gname <- ptep$gname
   idname <- ptep$idname
   tname <- ptep$tname
+  base_period <- ptep$base_period
+  anticipation <- ptep$anticipation
+  global_fun <- ptep$global_fun
 
 
   data <- as.data.frame(data)
@@ -176,9 +178,9 @@ compute.pte2 <- function(ptep,
   # list to hold extra results from gt-specific calculations
   extra_gt_returns <- list()
 
-  if (global_model) {
+  if (isTRUE(global_fun)) {
     data$y0 <- attgt_fun(data, ptep, ...)
-    stop("global_model not supported yet...")
+    stop("global_fun not supported yet...")
   }
 
   # loop over all time periods
@@ -535,6 +537,9 @@ pte2 <- function(yname,
                  gt_type = "att",
                  ret_quantile = NULL,
                  process_dtt_gt = NULL,
+                 global_fun = FALSE,
+                 time_period_fun = FALSE,
+                 group_fun = FALSE,
                  biters = 100,
                  cl = 1,
                  ...) {
@@ -549,6 +554,9 @@ pte2 <- function(yname,
     boot_type = boot_type,
     gt_type = gt_type,
     ret_quantile = ret_quantile,
+    global_fun = global_fun,
+    time_period_fun = time_period_fun,
+    group_fun = group_fun,
     biters = biters,
     cl = cl,
     ...
@@ -618,6 +626,7 @@ pte2 <- function(yname,
 #'
 #' @inheritParams pte_attgt
 #' @inheritParams pte
+#' @inheritParams pte_params
 #'
 #' @return `pte_results` object
 #' @export

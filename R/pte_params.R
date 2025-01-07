@@ -223,6 +223,8 @@ setup_pte <- function(yname,
 #'  for
 #' @param tlist list of time periods to create group-time average treatment
 #'  effects for
+#' @param cband whether or not to report a uniform (instead of pointwise)
+#'  confidence band (default is TRUE)
 #' @param alp significance level; default is 0.05
 #' @param boot_type which type of bootstrap to use
 #' @param anticipation how many periods before the treatment actually takes
@@ -243,6 +245,17 @@ setup_pte <- function(yname,
 #' @param gt_type which type of group-time effects are computed.
 #'  The default is "att".  Different estimation strategies can implement
 #'  their own choices for `gt_type`
+#' @param ret_quantile For functions that compute quantile treatment effects,
+#'  this is a specific quantile at which to report results, e.g.,
+#'  `ret_quantile = 0.5` will return that the qte at the median.
+#' @param global_fun Logical indicating whether or not untreated potential
+#'  outcomes can be estimated in one shot, i.e., for all groups and time periods.
+#'  Main use case would be for one-shot imputation estimators.  Not supported yet.
+#' @param time_period_fun Logical indicating whether or not untreated potential
+#'  outcomes can be estimated for all groups in the same time period.  Not supported yet.
+#' @param group_fun Logical indicating whether or not untreated potential outcomes
+#'  can be estimated for all time periods for a single group.  Not supported yet.
+#'  These functions aim at reducing or eliminating running the same code multiple times.
 #' @param biters number of bootstrap iterations; default is 100
 #' @param cl number of clusters to be used when bootstrapping; default is 1
 #'
@@ -263,6 +276,9 @@ pte_params <- function(yname,
                        control_group = "notyettreated",
                        gt_type = "att",
                        ret_quantile = 0.5,
+                       global_fun = FALSE,
+                       time_period_fun = FALSE,
+                       group_fun = FALSE,
                        biters,
                        cl) {
   obj <- list(
