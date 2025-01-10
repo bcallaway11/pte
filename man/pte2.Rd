@@ -124,6 +124,10 @@ their own choices for \code{gt_type}}
 this is a specific quantile at which to report results, e.g.,
 \code{ret_quantile = 0.5} will return that the qte at the median.}
 
+\item{process_dtt_gt}{An optional function to customize results when
+the gt-specific function returns the distribution of treated and untreated
+potential outcomes.}
+
 \item{global_fun}{Logical indicating whether or not untreated potential
 outcomes can be estimated in one shot, i.e., for all groups and time periods.
 Main use case would be for one-shot imputation estimators.  Not supported yet.}

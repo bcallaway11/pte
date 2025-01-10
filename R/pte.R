@@ -514,6 +514,10 @@ pte <- function(yname,
 #'  package will use the empirical bootstrap no matter what the value of this
 #'  parameter.
 #'
+#' @param process_dtt_gt An optional function to customize results when
+#'  the gt-specific function returns the distribution of treated and untreated
+#'  potential outcomes.
+#'
 #' @param ... extra arguments that can be passed to create the correct subsets
 #'  of the data (depending on \code{subset_fun}), to estimate group time
 #'  average treatment effects (depending on \code{attgt_fun}), or to

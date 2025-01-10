@@ -46,19 +46,13 @@ assumption}
 \item{Wpval}{p-value for Wald pre-test of ATT(g,t) version of parallel
 trends assumption}
 
-\item{cband}{whether or not to report a uniform (instead of pointwise)
-confidence band (default is TRUE)}
+\item{cband}{logical indicating whether or not to report a confidence band}
 
 \item{alp}{significance level}
 
 \item{ptep}{\code{pte_params} object}
 
-\item{extra_gt_returns}{A place to return anything extra from particular
-group-time average treatment effect calculations.  For DID, this might
-be something like propensity score estimates, regressions of untreated
-potential outcomes on covariates.  For ife, this could be something
-like the first step regression 2sls estimates.  This argument is also
-potentially useful for debugging.}
+\item{extra_gt_returns}{list containing extra returns at the group-time level}
 }
 \value{
 object of class \code{group_time_att}
