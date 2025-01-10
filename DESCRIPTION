@@ -1,7 +1,7 @@
 Package: pte
 Title: Panel Treatment Effects
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     person(given = "Brantly",
            family = "Callaway",
            role = c("aut", "cre"),
@@ -14,7 +14,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports:
-    BMisc (>= 1.4.1),
+    BMisc (>= 1.4.7),
     Matrix,
     did (>= 2.0.0),
     ggplot2,
@@ -22,6 +22,6 @@ Imports:
     tidyr,
     dplyr,
     pbapply
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
