@@ -41,7 +41,7 @@ references:
     email: brantly.callaway@uga.edu
   year: '2025'
   doi: 10.32614/CRAN.package.BMisc
-  version: '>= 1.4.1'
+  version: '>= 1.4.7'
 - type: software
   title: Matrix
   abstract: 'Matrix: Sparse and Dense Matrix Classes and Methods'
