@@ -3,6 +3,12 @@
 
 # Panel Treatment Effects (pte) Package <img src="man/figures/logo.png" align="right" alt="pte" width="155" />
 
+> **Note:** This package is superseded by
+> [`ptetools`](https://bcallaway11.github.io/ptetools/)
+> ([GitHub](https://github.com/bcallaway11/ptetools)), which provides
+> all of the same functionality and is actively maintained. This
+> repository is kept for reference and reproducibility of earlier work.
+
 The `pte` package compartmentalizes the steps needed to implement
 estimators of group-time average treatment effects (and their
 aggregations) in order to make it easier to apply the same sorts of
@@ -82,23 +88,38 @@ did_res <- pte(yname="lemp",
                subset_fun=two_by_two_subset,
                attgt_fun=did_attgt,
                xformla=~lpop) 
+#> Warning in pte(yname = "lemp", gname = "first.treat", tname = "year", idname = "countyreal", : 'pte' is deprecated.
+#> Use 'pte2' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(selective.se.inner, "se"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(selective.se.inner, "inf.func"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(dynamic.se.inner, "se"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(dynamic.se.inner, "inf.func"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
 
 summary(did_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.]  
-#>  -0.0323        0.0126    -0.0569     -0.0076 *
+#>  -0.0323        0.0118    -0.0554     -0.0091 *
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error   [95%  Conf. Band]  
-#>          -3   0.0269     0.0168 -0.0159      0.0697  
-#>          -2  -0.0050     0.0125 -0.0368      0.0269  
-#>          -1  -0.0229     0.0126 -0.0550      0.0093  
-#>           0  -0.0201     0.0131 -0.0534      0.0132  
-#>           1  -0.0547     0.0179 -0.1003     -0.0091 *
-#>           2  -0.1382     0.0409 -0.2422     -0.0341 *
-#>           3  -0.1069     0.0341 -0.1936     -0.0202 *
+#>          -3   0.0269     0.0117 -0.0021      0.0560  
+#>          -2  -0.0050     0.0119 -0.0344      0.0245  
+#>          -1  -0.0229     0.0135 -0.0563      0.0106  
+#>           0  -0.0201     0.0139 -0.0546      0.0143  
+#>           1  -0.0547     0.0152 -0.0923     -0.0171 *
+#>           2  -0.1382     0.0366 -0.2288     -0.0476 *
+#>           3  -0.1069     0.0344 -0.1919     -0.0219 *
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(did_res)
@@ -145,52 +166,63 @@ covid_res <- pte(yname="positive",
                  xformla=xformla,
                  max_e=21,
                  min_e=-10) 
-#> Warning in compute.aggte(MP = MP, type = type, balance_e = balance_e, min_e =
-#> min_e, : Simultaneous conf. band is somehow smaller than pointwise one using
-#> normal approximation. Since this is unusual, we are reporting pointwise
-#> confidence intervals
+#> Warning in pte(yname = "positive", gname = "group", tname = "time.period", : 'pte' is deprecated.
+#> Use 'pte2' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(selective.se.inner, "se"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(selective.se.inner, "inf.func"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(dynamic.se.inner, "se"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
+#> Warning in BMisc::getListElement(dynamic.se.inner, "inf.func"): 'BMisc::getListElement' is deprecated.
+#> Use 'get_list_element' instead.
+#> See help("Deprecated")
 
 summary(covid_res)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.] 
-#>  14.8882       58.1647   -99.1125    128.8888 
+#>  14.8882       91.3936    -164.24    194.0163 
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error     [95%  Conf. Band] 
-#>         -10  -3.7266     3.3841  -13.4426      5.9893 
-#>          -9   2.6607     1.5017   -1.6509      6.9722 
-#>          -8   0.8290     2.1465   -5.3339      6.9919 
-#>          -7   5.2843     1.9978   -0.4516     11.0203 
-#>          -6   2.8555     1.8211   -2.3730      8.0841 
-#>          -5   1.3589     4.0879  -10.3778     13.0956 
-#>          -4   0.3294     3.9431  -10.9916     11.6504 
-#>          -3  -4.2227     6.9336  -24.1295     15.6841 
-#>          -2  -3.8447     2.4340  -10.8329      3.1434 
-#>          -1  -0.2234     3.3015   -9.7021      9.2553 
-#>           0 -10.8156     8.8849  -36.3249     14.6936 
-#>           1 -13.7998    12.2977  -49.1073     21.5077 
-#>           2  -7.8432    11.9865  -42.2575     26.5711 
-#>           3  -4.5541    11.7315  -38.2362     29.1279 
-#>           4  -3.5368    12.7993  -40.2847     33.2110 
-#>           5   8.5221    11.1569  -23.5102     40.5544 
-#>           6   1.1140    17.8634  -50.1732     52.4012 
-#>           7   6.6384    24.7105  -64.3072     77.5841 
-#>           8   7.1288    23.8552  -61.3613     75.6189 
-#>           9  10.8758    30.7177  -77.3170     99.0687 
-#>          10  17.5057    34.2477  -80.8221    115.8335 
-#>          11  40.8318    46.6352  -93.0614    174.7250 
-#>          12  48.6134    57.4288 -116.2692    213.4960 
-#>          13  52.4228    64.1772 -131.8350    236.6806 
-#>          14  50.2000    47.2508  -85.4608    185.8608 
-#>          15  68.2960    66.0155 -121.2395    257.8315 
-#>          16  44.7305    85.7855 -201.5661    291.0272 
-#>          17  61.4670    76.4826 -158.1205    281.0544 
-#>          18  50.4635   114.1011 -277.1294    378.0564 
-#>          19  47.3392   129.9716 -325.8193    420.4976 
-#>          20  28.6326   121.7077 -320.7994    378.0646 
-#>          21   4.3445   133.7291 -379.6020    388.2910 
+#>         -10  -3.7266     3.2071  -11.5308      4.0775 
+#>          -9   2.6607     1.1809   -0.2129      5.5343 
+#>          -8   0.8290     2.2298   -4.5970      6.2550 
+#>          -7   5.2843     2.4317   -0.6328     11.2015 
+#>          -6   2.8555     2.2453   -2.6082      8.3193 
+#>          -5   1.3589     3.7392   -7.7399     10.4578 
+#>          -4   0.3294     3.5391   -8.2826      8.9414 
+#>          -3  -4.2227     4.9704  -16.3174      7.8721 
+#>          -2  -3.8447     2.7244  -10.4743      2.7848 
+#>          -1  -0.2234     3.5703   -8.9113      8.4645 
+#>           0 -10.8156     8.9321  -32.5508     10.9195 
+#>           1 -13.7998    15.5493  -51.6372     24.0376 
+#>           2  -7.8432    11.5933  -36.0541     20.3678 
+#>           3  -4.5541    11.2359  -31.8955     22.7872 
+#>           4  -3.5368    10.4700  -29.0144     21.9407 
+#>           5   8.5221    10.2973  -16.5351     33.5793 
+#>           6   1.1140    20.0732  -47.7317     49.9597 
+#>           7   6.6384    23.4109  -50.3292     63.6061 
+#>           8   7.1288    27.6501  -60.1545     74.4121 
+#>           9  10.8758    32.7738  -68.8754     90.6271 
+#>          10  17.5057    30.9114  -57.7134     92.7248 
+#>          11  40.8318    36.7505  -48.5961    130.2597 
+#>          12  48.6134    42.6849  -55.2554    152.4821 
+#>          13  52.4228    51.7367  -73.4722    178.3178 
+#>          14  50.2000    60.0231  -95.8590    196.2591 
+#>          15  68.2960    72.0307 -106.9822    243.5742 
+#>          16  44.7305    79.9407 -149.7958    239.2568 
+#>          17  61.4670    77.4408 -126.9760    249.9099 
+#>          18  50.4635   110.5784 -218.6159    319.5429 
+#>          19  47.3392   113.7345 -229.4203    324.0987 
+#>          20  28.6326   126.6005 -279.4347    336.6999 
+#>          21   4.3445   127.9147 -306.9207    315.6098 
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(covid_res) + ylim(c(-1000,1000))
@@ -249,23 +281,26 @@ did_res_noif <- pte(yname="lemp",
                     subset_fun=two_by_two_subset,
                     attgt_fun=did_attgt_noif, #this is only diff.
                     xformla=~lpop) 
+#> Warning in pte(yname = "lemp", gname = "first.treat", tname = "year", idname = "countyreal", : 'pte' is deprecated.
+#> Use 'pte2' instead.
+#> See help("Deprecated")
 
 summary(did_res_noif)
 #> 
 #> Overall ATT:  
 #>      ATT    Std. Error     [ 95%  Conf. Int.]  
-#>  -0.0323        0.0107    -0.0533     -0.0113 *
+#>  -0.0323        0.0121    -0.0559     -0.0086 *
 #> 
 #> 
 #> Dynamic Effects:
 #>  Event Time Estimate Std. Error [95% Pointwise  Conf. Band]  
-#>          -3   0.0269     0.0151         -0.0026      0.0565  
-#>          -2  -0.0050     0.0115         -0.0275      0.0176  
-#>          -1  -0.0229     0.0153         -0.0529      0.0072  
-#>           0  -0.0201     0.0102         -0.0400     -0.0002 *
-#>           1  -0.0547     0.0172         -0.0885     -0.0210 *
-#>           2  -0.1382     0.0391         -0.2148     -0.0616 *
-#>           3  -0.1069     0.0379         -0.1813     -0.0325 *
+#>          -3   0.0269     0.0133          0.0009      0.0530 *
+#>          -2  -0.0050     0.0134         -0.0313      0.0213  
+#>          -1  -0.0229     0.0153         -0.0528      0.0071  
+#>           0  -0.0201     0.0118         -0.0433      0.0030  
+#>           1  -0.0547     0.0164         -0.0869     -0.0226 *
+#>           2  -0.1382     0.0334         -0.2036     -0.0728 *
+#>           3  -0.1069     0.0353         -0.1762     -0.0377 *
 #> ---
 #> Signif. codes: `*' confidence band does not cover 0
 ggpte(did_res_noif)

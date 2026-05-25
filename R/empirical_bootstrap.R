@@ -58,7 +58,7 @@ panel_empirical_bootstrap <- function(attgt.list,
   # loop for each nonparametric bootstrap iteration
   boot.res <- pbapply::pblapply(1:biters, function(b) {
     # draw a bootstrap sample; here, we'll call an outside function
-    bdata <- BMisc::blockBootSample(data, idname)
+    bdata <- BMisc::block_boot_sample(data, idname)
 
     bptep <- setup_pte_fun(
       yname = ptep$yname,
@@ -98,7 +98,7 @@ panel_empirical_bootstrap <- function(attgt.list,
   }, cl = cl)
 
   # attgt results
-  attgt_results_inner <- bind_rows(BMisc::getListElement(boot.res, "attgt_results")) %>%
+  attgt_results_inner <- bind_rows(BMisc::get_list_element(boot.res, "attgt_results")) %>%
     group_by(group, time.period)
   attgt_results_se <- unlist(attgt_results_inner %>%
     group_map(~ sd(.x$att)))
@@ -106,7 +106,7 @@ panel_empirical_bootstrap <- function(attgt.list,
   attgt_results$se <- attgt_results_se
 
   # dynamic results
-  dyn_results_inner <- bind_rows(BMisc::getListElement(boot.res, "dyn_results")) %>%
+  dyn_results_inner <- bind_rows(BMisc::get_list_element(boot.res, "dyn_results")) %>%
     group_by(e) %>%
     mutate(length.e = length(e))
   original_elength <- length(unique(dyn_results_inner$e))
@@ -125,7 +125,7 @@ panel_empirical_bootstrap <- function(attgt.list,
 
   # group results
   group_results <- aggte$group_results
-  group_results_inner <- bind_rows(BMisc::getListElement(boot.res, "group_results")) %>%
+  group_results_inner <- bind_rows(BMisc::get_list_element(boot.res, "group_results")) %>%
     group_by(group) %>%
     mutate(length.group = length(group))
   original_glength <- length(unique(group_results_inner$group))
@@ -143,7 +143,7 @@ panel_empirical_bootstrap <- function(attgt.list,
 
   # overall results
   overall_results <- aggte$overall_results
-  overall_results_se <- sd(unlist(BMisc::getListElement(boot.res, "overall_results")))
+  overall_results_se <- sd(unlist(BMisc::get_list_element(boot.res, "overall_results")))
   overall_results <- tibble(att = overall_results, se = overall_results_se)
 
 
@@ -325,46 +325,46 @@ qtt_pte_aggregations <- function(attgt.list, ptep, extra_gt_returns) {
   qtt_gt <- unlist(lapply(1:length(F0_gt), function(j) {
     quantile(F1_gt[[j]], probs = ret_quantile, type = 1) - quantile(F0_gt[[j]], probs = ret_quantile, type = 1)
   }))
-  groups <- unlist(BMisc::getListElement(attgt.list, "group"))
-  time.periods <- unlist(BMisc::getListElement(attgt.list, "time.period"))
+  groups <- unlist(BMisc::get_list_element(attgt.list, "group"))
+  time.periods <- unlist(BMisc::get_list_element(attgt.list, "time.period"))
   yname <- ptep$yname
   y.seq <- quantile(ptep$data[, yname], probs = seq(0, 1, length.out = 1000))
 
-  F0_overall <- BMisc::combineDfs(
+  F0_overall <- BMisc::combine_ecdfs(
     y.seq = y.seq,
-    dflist = F0_gt,
+    ecdflist =F0_gt,
     pstrat = attgt_res$overall_weights
   )
-  F1_overall <- BMisc::combineDfs(
+  F1_overall <- BMisc::combine_ecdfs(
     y.seq = y.seq,
-    dflist = F1_gt,
+    ecdflist =F1_gt,
     pstrat = attgt_res$overall_weights
   )
   overall_qtt <- quantile(F1_overall, probs = ret_quantile, type = 1) - quantile(F0_overall, probs = ret_quantile, type = 1)
 
   dyn_qtt <- lapply(attgt_res$dyn_weights, function(dw) {
-    F0_e <- BMisc::combineDfs(
+    F0_e <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = F0_gt,
+      ecdflist =F0_gt,
       pstrat = dw$weights
     )
-    F1_e <- BMisc::combineDfs(
+    F1_e <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = F1_gt,
+      ecdflist =F1_gt,
       pstrat = dw$weights
     )
     list(e = dw$e, att.e = quantile(F1_e, probs = ret_quantile, type = 1) - quantile(F0_e, probs = ret_quantile, type = 1))
   })
 
   group_qtt <- lapply(attgt_res$group_weights, function(gw) {
-    F0_g <- BMisc::combineDfs(
+    F0_g <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = F0_gt,
+      ecdflist =F0_gt,
       pstrat = gw$weights
     )
-    F1_g <- BMisc::combineDfs(
+    F1_g <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = F1_gt,
+      ecdflist =F1_gt,
       pstrat = gw$weights
     )
     list(group = gw$g, att.g = quantile(F1_g, probs = ret_quantile, type = 1) - quantile(F0_g, probs = ret_quantile, type = 1))
@@ -405,31 +405,31 @@ qott_pte_aggregations <- function(attgt.list, ptep, extra_gt_returns) {
   qott_gt <- unlist(lapply(1:length(Fte_gt), function(j) {
     quantile(Fte_gt[[j]], probs = ret_quantile, type = 1)
   }))
-  groups <- unlist(BMisc::getListElement(attgt.list, "group"))
-  time.periods <- unlist(BMisc::getListElement(attgt.list, "time.period"))
+  groups <- unlist(BMisc::get_list_element(attgt.list, "group"))
+  time.periods <- unlist(BMisc::get_list_element(attgt.list, "time.period"))
   yname <- ptep$yname
   y.seq <- seq(-max(ptep$data[, yname]), max(ptep$data[, yname]), length.out = 1000)
 
-  Fte_overall <- BMisc::combineDfs(
+  Fte_overall <- BMisc::combine_ecdfs(
     y.seq = y.seq,
-    dflist = Fte_gt,
+    ecdflist =Fte_gt,
     pstrat = attgt_res$overall_weights
   )
   overall_qott <- quantile(Fte_overall, probs = ret_quantile, type = 1)
 
   dyn_qott <- lapply(attgt_res$dyn_weights, function(dw) {
-    Fte_e <- BMisc::combineDfs(
+    Fte_e <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = Fte_gt,
+      ecdflist =Fte_gt,
       pstrat = dw$weights
     )
     list(e = dw$e, att.e = quantile(Fte_e, probs = ret_quantile, type = 1))
   })
 
   group_qott <- lapply(attgt_res$group_weights, function(gw) {
-    Fte_g <- BMisc::combineDfs(
+    Fte_g <- BMisc::combine_ecdfs(
       y.seq = y.seq,
-      dflist = Fte_gt,
+      ecdflist =Fte_gt,
       pstrat = gw$weights
     )
     list(group = gw$g, att.g = quantile(Fte_g, probs = ret_quantile, type = 1))
